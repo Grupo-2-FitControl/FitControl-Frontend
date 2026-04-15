@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+:root {
+  --text-primary: #d4ff00;
+  --text-secondary: #ff5722;
+  --background: #000000;
+}
+*{
+  box-sizing: border-box;
+}
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.background {
+  background-color: var(--background);
+}
+.background-primary{
+  background-color: var(--text-primary);
+}
+li:hover {
+  background-color: var(--text-primary);
+ box-shadow: 5px 5px 0 #95b201;
+}
