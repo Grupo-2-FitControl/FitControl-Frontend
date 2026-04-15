@@ -10,12 +10,63 @@ import coachMelissa from "./assets/Melissa.png";
 import coachMaria from "./assets/maria regueiro.png";
 import coachRoberto from "./assets/alberto.png";
 
-function App() {
-  const misActividades = [
-    { id: 1, name: "BIKE", coach: "Melissa Gómez", description: "Entrenamiento cardiovascular intenso.", contact: "+34 624 39 42 61", image: imgCross, coachImage: coachMelissa },
-    { id: 2, name: "AQUAFIT", coach: "Maria Regueiro", description: "Mejora la resistencia sin impacto.", contact: "+34 600 00 00 00", image: imgCircuit, coachImage: coachMaria },
-    { id: 3, name: "CIRCUIT", coach: "Roberto Alberto", description: "Circuito de alta intensidad.", contact: "+34 600 00 00 00", image: imgCircuit, coachImage: coachRoberto },
-    { id: 4, name: "CROSS", coach: "Javier", description: "Entrenamiento funcional variado.", contact: "+34 600 00 00 00", image: imgCross, coachImage: imgCross },
+const misActividades = [
+
+   { 
+      id: 1, 
+      name: "AQUAFIT", 
+      coach: "Maria Regueiro", 
+      description: "Mejora la resistencia natural del agua para fortalecer la musculatura.",
+      image: imgPilates, 
+      coachImage: coachMaria, 
+      contact: "+34 642 81 54" 
+    },
+    { 
+      id: 2, 
+      name: "BIKE", 
+      coach: "Melissa Gómez", 
+      description: "Entrenamiento cardiovascular diseñado para fortalecer el tren inferior.",
+      image: imgZumba, 
+      coachImage: coachMelissa,
+      contact: "+34 624 39 42 61" 
+    },
+   
+    { 
+      id: 3, 
+      name: "CIRCUIT", 
+      coach: "Alberto García", 
+      description: "Circuito de alta intensidad por estaciones para trabajo metabólico.",
+      image: imgCross, 
+      coachImage: coachRoberto, 
+      contact: "+34 600 00 00 00" 
+    },
+    { 
+      id: 4, 
+      name: "CROSS TRAINING", 
+      coach: "Javier Galván", 
+      description: "Entrenamiento funcional variado ejecutado a alta intensidad.",
+      image: imgCross, 
+      coachImage: coachMaria, // Recuerda importar a Javier si tienes su foto
+      contact: "+34 600 11 11 11" 
+    },
+    { 
+      id: 5, 
+      name: "PILATES", 
+      coach: "Ana Morandeira", 
+      description: "Centrado en el control postural, la respiración y la flexibilidad.",
+      image: imgPilates, 
+      coachImage: coachMaria, // Recuerda importar a Ana si tienes su foto
+      contact: "+34 600 22 22 22" 
+    },
+    { 
+      id: 6, 
+      name: "ZUMBA", 
+      coach: "Alberto García", 
+      description: "Disciplina fitness que combina baile con rutinas aeróbicas.",
+      image: imgZumba, 
+      coachImage: coachRoberto, 
+      contact: "+34 600 33 33 33" 
+    }
   ];
 
   return (
