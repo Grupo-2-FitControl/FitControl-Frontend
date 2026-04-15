@@ -1,10 +1,10 @@
 const SPECIALTY_MAP = {
-  aquafit: 'border-blue-500 text-blue-500',
-  bike: 'border-red-500 text-red-500',
-  circuit: 'border-yellow-500 text-yellow-500',
-  crosstraining: 'border-orange-600 text-orange-600',
-  pilates: 'border-purple-500 text-purple-500',
-  zumba: 'border-pink-500 text-pink-500',
+  aquafit: 'text-[#00E5FF] border-[#00E5FF]',
+  bike: 'text-[#2979FF] border-[#2979FF]',
+  circuit: 'text-[#FF9100] border-[#FF9100]',
+  crosstraining: 'text-[#7C4DFF] border-[#7C4DFF]',
+  pilates: 'text-[#00C853] border-[#00C853]',
+  zumba: 'text-[#FF3D7F] border-[#FF3D7F]',
 };
 
 const getSpecialtyClass = (s) => {
@@ -12,7 +12,7 @@ const getSpecialtyClass = (s) => {
   for (const key of Object.keys(SPECIALTY_MAP)) {
     if (lower.includes(key)) return SPECIALTY_MAP[key];
   }
-  return 'border-orange-500 text-orange-500';
+  return 'border-[#FFA500] text-[#FFA500]'; // default style
 };
 
 const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
@@ -31,15 +31,15 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
     : [];
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col gap-4 hover:border-lime-400/40 hover:-translate-y-1 transition">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col gap-4 hover:border-[#D4FF00]/40 hover:-translate-y-1 transition">
 
       {/* Header */}
       <div className="flex gap-4">
         <div>
           {imageUrl ? (
-            <img src={imageUrl} className="w-16 h-16 rounded-full object-cover border-2 border-orange-500" />
+            <img src={imageUrl} className="w-16 h-16 rounded-full object-cover border-2 border-[#FF5722]" />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center text-orange-500 font-bold text-xl">
+            <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center text-[#FF5722] font-bold text-xl">
               {name?.[0]?.toUpperCase() || '?'}
             </div>
           )}
@@ -50,7 +50,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
             {name?.toUpperCase()}
           </h3>
           <p className="text-xs text-zinc-400">{dni}</p>
-          <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
+          <span className="text-xs bg-[#D4FF00]/20 text-[#D4FF00] px-2 py-1 rounded">
             ACTIVO DESDE {activeSince}
           </span>
         </div>
@@ -60,7 +60,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
 
       {/* Especialidades */}
       <div>
-        <p className="text-xs text-orange-500 font-bold tracking-widest mb-2">
+        <p className="text-xs text-[#FF5722] font-bold tracking-widest mb-2">
           ESPECIALIDADES
         </p>
 
@@ -86,10 +86,10 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
 
       {/* Actividades */}
       <div>
-        <p className="text-xs text-orange-500 font-bold tracking-widest">
+        <p className="text-xs text-[#FF5722] font-bold tracking-widest">
           CLASES ASIGNADAS
         </p>
-        <p className="text-lg font-extrabold text-orange-500">
+        <p className="text-lg font-extrabold text-[#FF5722]">
           {activeCount} ACTIVIDADES
         </p>
       </div>
@@ -98,13 +98,13 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
       <div className="flex gap-2 items-center">
         <button
           onClick={() => onSchedule(teacher)}
-          className="flex-1 border-2 border-lime-400 text-lime-400 hover:bg-lime-400 hover:text-black text-sm py-2 rounded font-bold transition"
+          className="flex-1 border-2 border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black text-sm py-2 rounded font-bold transition"
         >
           VER HORARIO
         </button>
         <button
           onClick={() => onEdit(teacher)}
-          className="border-2 border-lime-400 text-lime-400 hover:bg-lime-400 hover:text-black p-2 rounded transition"
+          className="border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black p-2 rounded transition"
         >
           ✎
         </button>

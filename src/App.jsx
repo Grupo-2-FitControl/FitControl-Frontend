@@ -5,7 +5,7 @@ import Teachers from "./pages/teachers/Teachers.jsx";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/activities" />} />
+      <Route path="/" element={<Navigate to="/teachers" />} />
       <Route path="/activities" element={<Activities />} />
       <Route path="/teachers" element={<Teachers />} />
     </Routes>
