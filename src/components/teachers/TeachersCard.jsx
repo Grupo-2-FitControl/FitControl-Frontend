@@ -1,3 +1,5 @@
+import { CalendarDaysIcon } from '@heroicons/react/24/outline';
+
 const SPECIALTY_MAP = {
   aquafit: 'text-[#00E5FF] border-[#00E5FF] hover:bg-[#00E5FF] hover:text-black',
   bike: 'text-[#2979FF] border-[#2979FF] hover:bg-[#2979FF] hover:text-black',
@@ -12,7 +14,7 @@ const getSpecialtyClass = (s) => {
   for (const key of Object.keys(SPECIALTY_MAP)) {
     if (lower.includes(key)) return SPECIALTY_MAP[key];
   }
-  return 'border-[#FFA500] text-[#FFA500]'; 
+  return 'border-[#FFA500] text-[#FFA500]';
 };
 
 const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
@@ -27,13 +29,13 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
   const specialtyList = Array.isArray(specialties)
     ? specialties
     : typeof specialties === 'string' && specialties
-    ? specialties.split(',').map(s => s.trim())
-    : [];
+      ? specialties.split(',').map(s => s.trim())
+      : [];
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col gap-4 hover:border-[#D4FF00]/40 hover:-translate-y-1 transition">
 
-      
+
       <div className="flex gap-4">
         <div>
           {imageUrl ? (
@@ -95,9 +97,9 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
       <div className="flex gap-2 items-center">
         <button
           onClick={() => onSchedule(teacher)}
-          className="flex-1 border-2 border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black text-sm py-2 rounded font-bold transition"
+          className="border-2 border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black p-2 rounded transition"
         >
-          VER HORARIO
+          <CalendarDaysIcon className="w-5 h-5" />
         </button>
         <button
           onClick={() => onEdit(teacher)}

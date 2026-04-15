@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { teacherService } from '../../services/api';
 import TeacherCard from '../../components/teachers/TeachersCard';
 import Toast from '../../components/teachers/Toast';
+import ScheduleModal from '../../components/teachers/ScheduleModal';
+import EditTeacherModal from '../../components/teachers/EditTeacherModal';
 
 const specialties = ['Aquafit', 'Bike', 'Circuit', 'CrossTraining', 'Pilates', 'Zumba'];
 
@@ -172,7 +174,7 @@ const Profesores = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 overflow-y-auto">
                     <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 my-8">
                         <h2 className="text-2xl font-extrabold text-[#D4FF00] mb-6 uppercase">Registrar Nuevo Profesor</h2>
-                        
+
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Nombre y Apellidos */}
                             <div className="grid grid-cols-2 gap-4">
@@ -244,11 +246,10 @@ const Profesores = () => {
                                             key={specialty}
                                             type="button"
                                             onClick={() => toggleSpecialty(specialty)}
-                                            className={`px-3 py-2 rounded font-semibold text-sm transition ${
-                                                formData.specialties.includes(specialty)
+                                            className={`px-3 py-2 rounded font-semibold text-sm transition ${formData.specialties.includes(specialty)
                                                     ? 'bg-[#D4FF00] text-black'
                                                     : 'bg-zinc-700 text-white hover:bg-zinc-600'
-                                            }`}
+                                                }`}
                                         >
                                             {specialty}
                                         </button>
@@ -316,6 +317,24 @@ const Profesores = () => {
                     message={toast.msg}
                     type={toast.type}
                     onClose={() => setToast(null)}
+                />
+            )}
+
+            {scheduleTeacher && (
+                <ScheduleModal
+                    teacher={scheduleTeacher}
+                    onClose={() => setScheduleTeacher(null)}
+                />
+            )}
+
+            {editTeacher && (
+                <EditTeacherModal
+                    teacher={editTeacher}
+                    onClose={() => setEditTeacher(null)}
+                    onSave={(data) => {
+                        console.log("Actualizar backend:", data);
+                        setEditTeacher(null);
+                    }}
                 />
             )}
         </div>
