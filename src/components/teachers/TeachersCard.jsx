@@ -1,10 +1,10 @@
 const SPECIALTY_MAP = {
-  aquafit: 'text-[#00E5FF] border-[#00E5FF]',
-  bike: 'text-[#2979FF] border-[#2979FF]',
-  circuit: 'text-[#FF9100] border-[#FF9100]',
-  crosstraining: 'text-[#7C4DFF] border-[#7C4DFF]',
-  pilates: 'text-[#00C853] border-[#00C853]',
-  zumba: 'text-[#FF3D7F] border-[#FF3D7F]',
+  aquafit: 'text-[#00E5FF] border-[#00E5FF] hover:bg-[#00E5FF] hover:text-black',
+  bike: 'text-[#2979FF] border-[#2979FF] hover:bg-[#2979FF] hover:text-black',
+  circuit: 'text-[#FF9100] border-[#FF9100] hover:bg-[#FF9100] hover:text-black',
+  crosstraining: 'text-[#7C4DFF] border-[#7C4DFF] hover:bg-[#7C4DFF] hover:text-black',
+  pilates: 'text-[#00C853] border-[#00C853] hover:bg-[#00C853] hover:text-black',
+  zumba: 'text-[#FF3D7F] border-[#FF3D7F] hover:bg-[#FF3D7F] hover:text-black',
 };
 
 const getSpecialtyClass = (s) => {
@@ -12,7 +12,7 @@ const getSpecialtyClass = (s) => {
   for (const key of Object.keys(SPECIALTY_MAP)) {
     if (lower.includes(key)) return SPECIALTY_MAP[key];
   }
-  return 'border-[#FFA500] text-[#FFA500]'; // default style
+  return 'border-[#FFA500] text-[#FFA500]'; 
 };
 
 const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
@@ -33,7 +33,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col gap-4 hover:border-[#D4FF00]/40 hover:-translate-y-1 transition">
 
-      {/* Header */}
+      
       <div className="flex gap-4">
         <div>
           {imageUrl ? (
@@ -58,7 +58,6 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
 
       <div className="h-px bg-zinc-800" />
 
-      {/* Especialidades */}
       <div>
         <p className="text-xs text-[#FF5722] font-bold tracking-widest mb-2">
           ESPECIALIDADES
@@ -84,7 +83,6 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
 
       <div className="h-px bg-zinc-800" />
 
-      {/* Actividades */}
       <div>
         <p className="text-xs text-[#FF5722] font-bold tracking-widest">
           CLASES ASIGNADAS
@@ -94,7 +92,6 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
         </p>
       </div>
 
-      {/* Botón horario */}
       <div className="flex gap-2 items-center">
         <button
           onClick={() => onSchedule(teacher)}

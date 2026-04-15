@@ -168,7 +168,6 @@ const Profesores = () => {
                 </div>
             )}
 
-            {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 overflow-y-auto">
                     <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 my-8">
@@ -204,7 +203,6 @@ const Profesores = () => {
                                 </div>
                             </div>
 
-                            {/* DNI y Año */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-[#D4FF00] text-sm font-bold mb-2">
@@ -236,7 +234,6 @@ const Profesores = () => {
                                 </div>
                             </div>
 
-                            {/* Especialidades */}
                             <div>
                                 <label className="block text-[#D4FF00] text-sm font-bold mb-3">
                                     ESPECIALIDADES * (SELECCIONA AL MENOS UNA)
@@ -259,7 +256,6 @@ const Profesores = () => {
                                 </div>
                             </div>
 
-                            {/* URL Imagen */}
                             <div>
                                 <label className="block text-[#D4FF00] text-sm font-bold mb-2">
                                     URL DE IMAGEN (Opcional)
@@ -273,7 +269,6 @@ const Profesores = () => {
                                 />
                             </div>
 
-                            {/* Información */}
                             <div className="bg-red-500/10 border border-red-500 rounded p-4">
                                 <div className="flex gap-3">
                                     <span className="text-red-400 font-bold">ℹ</span>
@@ -288,7 +283,6 @@ const Profesores = () => {
                                 </div>
                             </div>
 
-                            {/* Botones */}
                             <div className="grid grid-cols-2 gap-4 pt-4">
                                 <button
                                     type="button"
