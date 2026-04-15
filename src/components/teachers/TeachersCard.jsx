@@ -96,11 +96,12 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
 
       <div className="flex gap-2 items-center">
         <button
-          onClick={() => onSchedule(teacher)}
-          className="border-2 border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black p-2 rounded transition"
-        >
-          <CalendarDaysIcon className="w-5 h-5" />
-        </button>
+  onClick={() => onSchedule(teacher)}
+  title="Ver horario"
+  className="border-2 border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black p-2 rounded transition"
+>
+  <CalendarDaysIcon className="w-5 h-5" />
+</button>
         <button
           onClick={() => onEdit(teacher)}
           className="border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black p-2 rounded transition"

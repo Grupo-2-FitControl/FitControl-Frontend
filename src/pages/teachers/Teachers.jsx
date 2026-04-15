@@ -4,6 +4,12 @@ import TeacherCard from '../../components/teachers/TeachersCard';
 import Toast from '../../components/teachers/Toast';
 import ScheduleModal from '../../components/teachers/ScheduleModal';
 import EditTeacherModal from '../../components/teachers/EditTeacherModal';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import {
+    CheckIcon,
+    XMarkIcon,
+    ArrowPathIcon
+} from '@heroicons/react/24/outline';
 
 const specialties = ['Aquafit', 'Bike', 'Circuit', 'CrossTraining', 'Pilates', 'Zumba'];
 
@@ -118,13 +124,14 @@ const Profesores = () => {
 
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-[#D4FF00] text-black px-4 py-2 rounded font-bold hover:bg-[#D4FF00]/80 transition"
+                    title="Crear un nuevo profesor"
+                    aria-label="Crear un nuevo profesor"
+                    className="bg-[#D4FF00] text-black p-3 rounded font-bold hover:bg-[#D4FF00]/80 transition flex items-center justify-center"
                 >
-                    + NUEVO PROFESOR
+                    <PlusIcon className="w-6 h-6" />
                 </button>
             </div>
 
-            {/* Buscador */}
             <div className="mb-6">
                 <input
                     type="text"
@@ -135,7 +142,6 @@ const Profesores = () => {
                 />
             </div>
 
-            {/* Loading */}
             {loading ? (
                 <div className="grid grid-cols-3 gap-4">
                     {[1, 2, 3].map(i => (
@@ -171,12 +177,15 @@ const Profesores = () => {
             )}
 
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 overflow-y-auto">
-                    <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 my-8">
-                        <h2 className="text-2xl font-extrabold text-[#D4FF00] mb-6 uppercase">Registrar Nuevo Profesor</h2>
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 p-4 overflow-y-auto">
+                    <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 max-h-[90vh] overflow-y-auto">
+
+                        <h2 className="text-2xl font-extrabold text-[#D4FF00] mb-6 uppercase">
+                            Registrar Nuevo Profesor
+                        </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Nombre y Apellidos */}
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-[#D4FF00] text-sm font-bold mb-2">
@@ -187,7 +196,6 @@ const Profesores = () => {
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
-                                        placeholder="Ej: Carlos"
                                     />
                                 </div>
 
@@ -200,113 +208,93 @@ const Profesores = () => {
                                         value={formData.lastName}
                                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                                         className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
-                                        placeholder="Ej: Ramírez García"
                                     />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
-                                        DNI *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.dni}
-                                        onChange={(e) => setFormData({ ...formData, dni: e.target.value.toUpperCase() })}
-                                        maxLength={9}
-                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
-                                        placeholder="11111111A"
-                                    />
-                                    <p className="text-zinc-500 text-xs mt-1">Formato: 8 números seguidos de 1 letra mayúscula</p>
-                                </div>
+                                <input
+                                    type="text"
+                                    value={formData.dni}
+                                    onChange={(e) => setFormData({ ...formData, dni: e.target.value.toUpperCase() })}
+                                    className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                                    placeholder="DNI"
+                                />
 
-                                <div>
-                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
-                                        AÑO DE CONTRATACIÓN *
-                                    </label>
-                                    <input
-                                        type="number"
-                                        value={formData.year}
-                                        onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
-                                        min={2000}
-                                        max={new Date().getFullYear()}
-                                    />
-                                </div>
+                                <input
+                                    type="number"
+                                    value={formData.year}
+                                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                                    className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                                />
                             </div>
 
                             <div>
                                 <label className="block text-[#D4FF00] text-sm font-bold mb-3">
-                                    ESPECIALIDADES * (SELECCIONA AL MENOS UNA)
+                                    ESPECIALIDADES *
                                 </label>
+
                                 <div className="grid grid-cols-5 gap-2">
-                                    {specialties.map(specialty => (
+                                    {specialties.map(s => (
                                         <button
-                                            key={specialty}
+                                            key={s}
                                             type="button"
-                                            onClick={() => toggleSpecialty(specialty)}
-                                            className={`px-3 py-2 rounded font-semibold text-sm transition ${formData.specialties.includes(specialty)
-                                                    ? 'bg-[#D4FF00] text-black'
-                                                    : 'bg-zinc-700 text-white hover:bg-zinc-600'
+                                            onClick={() => toggleSpecialty(s)}
+                                            className={`px-3 py-2 rounded text-sm ${formData.specialties.includes(s)
+                                                ? 'bg-[#D4FF00] text-black'
+                                                : 'bg-zinc-700 text-white'
                                                 }`}
                                         >
-                                            {specialty}
+                                            {s}
                                         </button>
                                     ))}
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-[#D4FF00] text-sm font-bold mb-2">
-                                    URL DE IMAGEN (Opcional)
-                                </label>
-                                <input
-                                    type="url"
-                                    value={formData.imageUrl}
-                                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                    className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
-                                    placeholder="https://res.cloudinary.com/..."
-                                />
-                            </div>
+                            <input
+                                type="url"
+                                value={formData.imageUrl}
+                                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                                placeholder="URL imagen"
+                            />
 
-                            <div className="bg-red-500/10 border border-red-500 rounded p-4">
-                                <div className="flex gap-3">
-                                    <span className="text-red-400 font-bold">ℹ</span>
-                                    <div className="text-red-400 text-sm">
-                                        <p className="font-bold mb-2">Información del profesor</p>
-                                        <ul className="list-disc list-inside space-y-1">
-                                            <li>El profesor será creado con estado <strong>ACTIVO</strong></li>
-                                            <li>Podrá ser asignado a actividades según sus especialidades</li>
-                                            <li>Sus datos podrán ser editados posteriormente</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* Botones */}
+                            <div className="flex justify-between items-center pt-4 gap-3">
 
-                            <div className="grid grid-cols-2 gap-4 pt-4">
+                                {/* LIMPIAR */}
                                 <button
                                     type="button"
                                     onClick={resetForm}
-                                    className="bg-zinc-700 text-[#D4FF00] px-4 py-3 rounded font-bold hover:bg-zinc-600 transition uppercase"
+                                    title="Limpiar formulario"
+                                    aria-label="Limpiar formulario"
+                                    className="bg-zinc-700 text-[#D4FF00] p-3 rounded hover:bg-zinc-600 transition flex items-center justify-center"
                                 >
-                                    Limpiar Formulario
+                                    <ArrowPathIcon className="w-5 h-5" />
                                 </button>
+
+                                {/* CANCELAR */}
+                                <button
+                                    type="button"
+                                    onClick={closeModal}
+                                    title="Cancelar y cerrar"
+                                    aria-label="Cancelar y cerrar"
+                                    className="bg-zinc-700 text-white p-3 rounded hover:bg-zinc-600 transition flex items-center justify-center"
+                                >
+                                    <XMarkIcon className="w-5 h-5" />
+                                </button>
+
+                                {/* GUARDAR */}
                                 <button
                                     type="submit"
-                                    className="bg-[#D4FF00] text-black px-4 py-3 rounded font-bold hover:bg-[#C1E500] transition uppercase"
+                                    title="Guardar profesor"
+                                    aria-label="Guardar profesor"
+                                    className="bg-[#D4FF00] text-black p-3 rounded hover:bg-[#C1E500] transition flex items-center justify-center"
                                 >
-                                    Registrar Profesor
+                                    <CheckIcon className="w-5 h-5" />
                                 </button>
-                            </div>
 
-                            <button
-                                type="button"
-                                onClick={closeModal}
-                                className="w-full bg-zinc-700 text-white px-4 py-2 rounded hover:bg-zinc-600 transition"
-                            >
-                                Cancelar
-                            </button>
+                            </div>
                         </form>
                     </div>
                 </div>
