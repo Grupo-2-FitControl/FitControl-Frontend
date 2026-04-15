@@ -3,7 +3,7 @@ import { teacherService } from '../../services/api';
 import TeacherCard from '../../components/teachers/TeachersCard';
 import Toast from '../../components/teachers/Toast';
 
-const specialties = ['CrossFit', 'Yoga', 'Pilates', 'Spinning', 'Boxeo', 'HIIT', 'Zumba', 'TRX', 'Funcional', 'Body Combat'];
+const specialties = ['Aquafit', 'Bike', 'Circuit', 'CrossTraining', 'Pilates', 'Zumba'];
 
 const Profesores = () => {
     const [teachers, setTeachers] = useState([]);
@@ -17,6 +17,7 @@ const Profesores = () => {
         dni: '',
         year: new Date().getFullYear(),
         specialties: [],
+        imageUrl: '',
     });
     const [editTeacher, setEditTeacher] = useState(null);
     const [scheduleTeacher, setScheduleTeacher] = useState(null);
@@ -62,7 +63,7 @@ const Profesores = () => {
                 specialties: formData.specialties,
                 activities: [],
                 activityCount: 0,
-                imageUrl: `https://via.placeholder.com/150/FF6B35/FFFFFF?text=${formData.name[0]}${formData.lastName[0]}`,
+                imageUrl: formData.imageUrl || `https://via.placeholder.com/150/FF6B35/FFFFFF?text=${formData.name[0]}${formData.lastName[0]}`,
                 isActive: true,
             });
             setTeachers([...teachers, res.data]);
@@ -81,6 +82,7 @@ const Profesores = () => {
             dni: '',
             year: new Date().getFullYear(),
             specialties: [],
+            imageUrl: '',
         });
     };
 
@@ -255,6 +257,20 @@ const Profesores = () => {
                                         </button>
                                     ))}
                                 </div>
+                            </div>
+
+                            {/* URL Imagen */}
+                            <div>
+                                <label className="block text-lime-400 text-sm font-bold mb-2">
+                                    URL DE IMAGEN (Opcional)
+                                </label>
+                                <input
+                                    type="url"
+                                    value={formData.imageUrl}
+                                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                                    className="w-full bg-zinc-800 border border-lime-400 rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
+                                    placeholder="https://res.cloudinary.com/..."
+                                />
                             </div>
 
                             {/* Información */}

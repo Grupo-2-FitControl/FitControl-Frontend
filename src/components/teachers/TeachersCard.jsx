@@ -1,12 +1,10 @@
 const SPECIALTY_MAP = {
-  crossfit: 'border-red-500 text-red-500',
-  spinning: 'border-orange-500 text-orange-500',
-  yoga: 'border-green-500 text-green-500',
+  aquafit: 'border-blue-500 text-blue-500',
+  bike: 'border-red-500 text-red-500',
+  circuit: 'border-yellow-500 text-yellow-500',
+  crosstraining: 'border-orange-600 text-orange-600',
   pilates: 'border-purple-500 text-purple-500',
-  boxeo: 'border-orange-600 text-orange-600',
-  hiit: 'border-red-500 text-red-500',
-  zumba: 'border-yellow-500 text-yellow-500',
-  natacion: 'border-blue-500 text-blue-500',
+  zumba: 'border-pink-500 text-pink-500',
 };
 
 const getSpecialtyClass = (s) => {
