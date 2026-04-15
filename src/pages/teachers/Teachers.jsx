@@ -116,7 +116,7 @@ const Profesores = () => {
 
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-lime-400 text-black px-4 py-2 rounded font-bold hover:bg-lime-500 transition"
+                    className="bg-[#D4FF00] text-black px-4 py-2 rounded font-bold hover:bg-[#D4FF00]/80 transition"
                 >
                     + NUEVO PROFESOR
                 </button>
@@ -129,7 +129,7 @@ const Profesores = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Buscar por nombre o especialidad..."
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-lime-400 transition"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#D4FF00] transition"
                 />
             </div>
 
@@ -149,7 +149,7 @@ const Profesores = () => {
                             </p>
                             <button
                                 onClick={() => setShowModal(true)}
-                                className="bg-lime-400 text-black px-4 py-2 rounded hover:bg-lime-500 transition"
+                                className="bg-[#D4FF00] text-black px-4 py-2 rounded hover:bg-[#D4FF00]/80 transition"
                             >
                                 Añadir primer profesor
                             </button>
@@ -172,33 +172,33 @@ const Profesores = () => {
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 overflow-y-auto">
                     <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 my-8">
-                        <h2 className="text-2xl font-extrabold text-lime-400 mb-6 uppercase">Registrar Nuevo Profesor</h2>
+                        <h2 className="text-2xl font-extrabold text-[#D4FF00] mb-6 uppercase">Registrar Nuevo Profesor</h2>
                         
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Nombre y Apellidos */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-lime-400 text-sm font-bold mb-2">
+                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
                                         NOMBRE *
                                     </label>
                                     <input
                                         type="text"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full bg-zinc-800 border border-lime-400 rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
+                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
                                         placeholder="Ej: Carlos"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-lime-400 text-sm font-bold mb-2">
+                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
                                         APELLIDOS *
                                     </label>
                                     <input
                                         type="text"
                                         value={formData.lastName}
                                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                        className="w-full bg-zinc-800 border border-lime-400 rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
+                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
                                         placeholder="Ej: Ramírez García"
                                     />
                                 </div>
@@ -207,7 +207,7 @@ const Profesores = () => {
                             {/* DNI y Año */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-lime-400 text-sm font-bold mb-2">
+                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
                                         DNI *
                                     </label>
                                     <input
@@ -215,21 +215,21 @@ const Profesores = () => {
                                         value={formData.dni}
                                         onChange={(e) => setFormData({ ...formData, dni: e.target.value.toUpperCase() })}
                                         maxLength={9}
-                                        className="w-full bg-zinc-800 border border-lime-400 rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
+                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
                                         placeholder="11111111A"
                                     />
                                     <p className="text-zinc-500 text-xs mt-1">Formato: 8 números seguidos de 1 letra mayúscula</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-lime-400 text-sm font-bold mb-2">
+                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
                                         AÑO DE CONTRATACIÓN *
                                     </label>
                                     <input
                                         type="number"
                                         value={formData.year}
                                         onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                                        className="w-full bg-zinc-800 border border-lime-400 rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
+                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
                                         min={2000}
                                         max={new Date().getFullYear()}
                                     />
@@ -238,7 +238,7 @@ const Profesores = () => {
 
                             {/* Especialidades */}
                             <div>
-                                <label className="block text-lime-400 text-sm font-bold mb-3">
+                                <label className="block text-[#D4FF00] text-sm font-bold mb-3">
                                     ESPECIALIDADES * (SELECCIONA AL MENOS UNA)
                                 </label>
                                 <div className="grid grid-cols-5 gap-2">
@@ -249,7 +249,7 @@ const Profesores = () => {
                                             onClick={() => toggleSpecialty(specialty)}
                                             className={`px-3 py-2 rounded font-semibold text-sm transition ${
                                                 formData.specialties.includes(specialty)
-                                                    ? 'bg-lime-400 text-black'
+                                                    ? 'bg-[#D4FF00] text-black'
                                                     : 'bg-zinc-700 text-white hover:bg-zinc-600'
                                             }`}
                                         >
@@ -261,14 +261,14 @@ const Profesores = () => {
 
                             {/* URL Imagen */}
                             <div>
-                                <label className="block text-lime-400 text-sm font-bold mb-2">
+                                <label className="block text-[#D4FF00] text-sm font-bold mb-2">
                                     URL DE IMAGEN (Opcional)
                                 </label>
                                 <input
                                     type="url"
                                     value={formData.imageUrl}
                                     onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                    className="w-full bg-zinc-800 border border-lime-400 rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
+                                    className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
                                     placeholder="https://res.cloudinary.com/..."
                                 />
                             </div>
@@ -293,13 +293,13 @@ const Profesores = () => {
                                 <button
                                     type="button"
                                     onClick={resetForm}
-                                    className="bg-zinc-700 text-lime-400 px-4 py-3 rounded font-bold hover:bg-zinc-600 transition uppercase"
+                                    className="bg-zinc-700 text-[#D4FF00] px-4 py-3 rounded font-bold hover:bg-zinc-600 transition uppercase"
                                 >
                                     Limpiar Formulario
                                 </button>
                                 <button
                                     type="submit"
-                                    className="bg-lime-400 text-black px-4 py-3 rounded font-bold hover:bg-lime-500 transition uppercase"
+                                    className="bg-[#D4FF00] text-black px-4 py-3 rounded font-bold hover:bg-[#C1E500] transition uppercase"
                                 >
                                     Registrar Profesor
                                 </button>
