@@ -2,10 +2,10 @@ import Navbar from "../navbar/Navbar";
 import { Outlet } from "react-router-dom";
 function Layout() {
   return (
-    <div>
+    <div className="flex min-h-screen flex-col lg:flex-row">
       <Navbar />
 
-      <main>
+      <main className="flex-1">
         <Outlet />
       </main>
     </div>

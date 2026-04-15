@@ -1,7 +1,9 @@
+import Banner from "../../components/home/banner/Banner"
+
 function Home(){
     return(
-        <div className="h-100">
-
+        <div className="background h-1000">
+            <Banner/>
         </div>
     )
 }

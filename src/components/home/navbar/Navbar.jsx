@@ -1,71 +1,97 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import logo from "../../../assets/LogoFitControlGym.png";
 
 function Navbar() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    const original = document.body.style.overflow;
     document.body.style.overflow = visible ? "hidden" : "auto";
+
+    return () => {
+      document.body.style.overflow = original;
+    };
   }, [visible]);
 
   return (
     <>
-      <header className="bg-mist-800 w-full lg:w-64 flex flex-col shadow-md lg:h-screen lg:sticky lg:top-0 lg:border-r-2 text-primary relative z-50">
-        
-        <div className="w-full p-6 border-b border-gray-400 flex justify-between items-center lg:flex-col">
-    
-          <div
-            className="text-2xl lg:hidden cursor-pointer"
-            onClick={() => setVisible(!visible)}
+      <div className="bg-mist-800 w-full p-4 flex justify-between items-center text-white lg:hidden">
+        <button
+          className="text-2xl"
+          onClick={() => setVisible(true)}
+        >
+          ☰
+        </button>
+
+        <div className="flex items-center gap-2">
+          <img src={logo} className="w-8 h-8" />
+          <span className="font-bold">FitControl</span>
+        </div>
+      </div>
+
+      {/* 🔥 DRAWER (MENÚ COMPLETO) */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full w-72 bg-mist-800 text-white z-50
+          transform transition-transform duration-300
+          ${visible ? "translate-x-0" : "-translate-x-full"}
+
+          lg:translate-x-0 lg:static lg:h-screen
+        `}
+      >
+        {/* HEADER DEL MENÚ */}
+        <div className="p-6 flex justify-between items-center border-b border-gray-600">
+          <div className="flex items-center gap-2">
+            <img src={logo} className="w-10 h-10" />
+            <span className="font-bold text-lg">FitControl</span>
+          </div>
+
+          <button
+            className="text-xl lg:hidden"
+            onClick={() => setVisible(false)}
           >
-            {visible ? "✕" : "☰"}
-          </div>
-
-          <img
-            src="src/assets/LogoFitControlGym.png"
-            alt="FitControl Gym Logo"
-            className="w-12 h-12 object-contain"
-          />
-
-          <div className="text-center leading-tight">
-            <h1 className="text-xl font-bold flex gap-1 justify-center">
-              <span className="text-secondary">Fit</span>
-              <span className="text-white">Control</span>
-            </h1>
-            <p className="text-sm text-primary">Gym Manager</p>
-          </div>
+            ✕
+          </button>
         </div>
 
-        <nav
-          className={` bg-mist-800 flex-1 transform transition-transform duration-500 
-          ${visible ? "translate-x-0" : "-translate-x-full"} 
-          lg:translate-x-0 lg:static fixed left-0 top-[100px] h-full z-50`}
-        >
-          <ul className="flex flex-col gap-3 p-4 text-white">
-            
-            <li className="p-2 rounded flex gap-2 justify-center lg:justify-around hover:text-black hover:font-bold">
-              <Link to="/">Actividades</Link>
+        {/* NAV */}
+        <nav className="p-4">
+          <ul className="flex flex-col gap-4">
+
+            <li>
+              <Link to="/" onClick={() => setVisible(false)}>
+                Actividades
+              </Link>
             </li>
 
-            <li className="p-2 rounded flex gap-2 justify-center lg:justify-around hover:text-black hover:font-bold">
-              <a href="#">Usuarios</a>
+            <li>
+              <Link to="/activities" onClick={() => setVisible(false)}>
+                Usuarios
+              </Link>
             </li>
 
-            <li className="p-2 rounded flex gap-2 justify-center lg:justify-around hover:text-black hover:font-bold">
-              <a href="#">Profesores</a>
+            <li>
+              <Link to="/teachers" onClick={() => setVisible(false)}>
+                Profesores
+              </Link>
             </li>
 
-            <li className="p-2 rounded flex gap-2 justify-center lg:justify-around hover:text-black hover:font-bold">
-              <a href="#">Mis actividades</a>
+            <li>
+              <Link to="/mis-actividades" onClick={() => setVisible(false)}>
+                Mis actividades
+              </Link>
             </li>
 
           </ul>
         </nav>
-      </header>
+      </aside>
 
       <div
-        className={`fixed inset-0 bg-black z-40 transition-opacity duration-500 
-        ${visible ? "opacity-50" : "opacity-0 pointer-events-none"}`}
+        className={`
+          fixed inset-0 bg-black transition-opacity duration-300 z-40
+          ${visible ? "opacity-50" : "opacity-0 pointer-events-none"}
+        `}
         onClick={() => setVisible(false)}
       />
     </>
