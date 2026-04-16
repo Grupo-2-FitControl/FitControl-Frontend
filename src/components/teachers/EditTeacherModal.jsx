@@ -4,43 +4,28 @@ import {
     XMarkIcon
 } from '@heroicons/react/24/outline';
 
-const specialtiesList = ['Aquafit', 'Bike', 'Circuit', 'CrossTraining', 'Pilates', 'Zumba'];
-
 const EditTeacherModal = ({ teacher, onClose, onSave }) => {
     const [form, setForm] = useState({
-        name: teacher?.name?.split(" ")[0] || "",
-        lastName: teacher?.lastName || "",
+        nombre: teacher?.nombre || "",
         dni: teacher?.dni || "",
-        year: teacher?.hiringYear || new Date().getFullYear(),
-        specialties: teacher?.specialties || [],
-        imageUrl: teacher?.imageUrl || "",
+        email: teacher?.email || "",
+        contratado: teacher?.contratado !== false,
+        imagen: teacher?.imagen || "",
     });
 
     const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
         setForm({
             ...form,
-            [e.target.name]: e.target.value,
+            [name]: type === 'checkbox' ? checked : value,
         });
     };
 
-    const toggleSpecialty = (specialty) => {
-        setForm(prev => ({
-            ...prev,
-            specialties: prev.specialties.includes(specialty)
-                ? prev.specialties.filter(s => s !== specialty)
-                : [...prev.specialties, specialty]
-        }));
-    };
-
     const handleSubmit = () => {
-        if (!form.name || !form.lastName || !form.dni) return;
-
-        const fullName = `${form.name} ${form.lastName}`;
+        if (!form.nombre || !form.dni || !form.email) return;
 
         onSave({
             ...form,
-            name: fullName,
-            hiringYear: form.year,
         });
     };
 
@@ -52,66 +37,53 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
                     EDITAR PROFESOR
                 </h2>
 
-                
-                <div className="grid grid-cols-2 gap-2">
+                <input
+                    name="nombre"
+                    value={form.nombre}
+                    onChange={handleChange}
+                    placeholder="Nombre completo"
+                    className="w-full p-2 bg-zinc-800 text-white rounded mb-2"
+                />
+
+                <div className="grid grid-cols-2 gap-2 mb-2">
                     <input
-                        name="name"
-                        value={form.name}
+                        name="dni"
+                        value={form.dni}
                         onChange={handleChange}
-                        placeholder="Nombre"
+                        placeholder="DNI (ej: 12345678A)"
                         className="p-2 bg-zinc-800 text-white rounded"
                     />
+
                     <input
-                        name="lastName"
-                        value={form.lastName}
+                        type="email"
+                        name="email"
+                        value={form.email}
                         onChange={handleChange}
-                        placeholder="Apellidos"
+                        placeholder="Email"
                         className="p-2 bg-zinc-800 text-white rounded"
                     />
                 </div>
 
-                <input
-                    name="dni"
-                    value={form.dni}
-                    onChange={handleChange}
-                    placeholder="DNI"
-                    className="w-full mt-2 p-2 bg-zinc-800 text-white rounded"
-                />
-
-                <input
-                    type="number"
-                    name="year"
-                    value={form.year}
-                    onChange={handleChange}
-                    className="w-full mt-2 p-2 bg-zinc-800 text-white rounded"
-                />
-
-                <div className="mt-3">
-                    <p className="text-[#FF5722] text-sm mb-2">ESPECIALIDADES</p>
-                    <div className="flex flex-wrap gap-2">
-                        {specialtiesList.map(s => (
-                            <button
-                                key={s}
-                                type="button"
-                                onClick={() => toggleSpecialty(s)}
-                                className={`px-2 py-1 text-xs rounded ${
-                                    form.specialties.includes(s)
-                                        ? 'bg-[#D4FF00] text-black'
-                                        : 'bg-zinc-700 text-white'
-                                }`}
-                            >
-                                {s}
-                            </button>
-                        ))}
-                    </div>
+                <div className="flex items-center gap-2 mb-2">
+                    <input
+                        type="checkbox"
+                        name="contratado"
+                        checked={form.contratado}
+                        onChange={handleChange}
+                        className="w-4 h-4 cursor-pointer"
+                        id="contratado-edit"
+                    />
+                    <label htmlFor="contratado-edit" className="text-white text-sm cursor-pointer">
+                        Contratado
+                    </label>
                 </div>
 
                 <input
-                    name="imageUrl"
-                    value={form.imageUrl}
+                    name="imagen"
+                    value={form.imagen}
                     onChange={handleChange}
-                    placeholder="URL Imagen"
-                    className="w-full mt-3 p-2 bg-zinc-800 text-white rounded"
+                    placeholder="URL Imagen (opcional)"
+                    className="w-full p-2 bg-zinc-800 text-white rounded mb-4"
                 />
 
                 <div className="flex gap-3 mt-4 justify-between items-center">

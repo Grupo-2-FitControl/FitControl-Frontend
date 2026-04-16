@@ -12,8 +12,6 @@ import {
     ArrowPathIcon
 } from '@heroicons/react/24/outline';
 
-const specialties = ['Aquafit', 'Bike', 'Circuit', 'CrossTraining', 'Pilates', 'Zumba'];
-
 const Profesores = () => {
     const [teachers, setTeachers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -22,12 +20,11 @@ const Profesores = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const [formData, setFormData] = useState({
-        name: '',
-        lastName: '',
+        nombre: '',
         dni: '',
-        year: new Date().getFullYear(),
-        specialties: [],
-        imageUrl: '',
+        email: '',
+        contratado: true,
+        imagen: '',
     });
 
     const [editTeacher, setEditTeacher] = useState(null);
@@ -50,37 +47,42 @@ const Profesores = () => {
     useEffect(() => { load(); }, []);
 
     const activeTeachers = teachers
-        .filter(t => t.isActive !== false && t.active !== false)
+        .filter(t => t.contratado !== false)
         .filter(t => {
             const searchLower = searchTerm.toLowerCase();
-            const nameMatches = t.name?.toLowerCase().includes(searchLower);
-            const specialtyMatches = t.specialties?.some(s => s.toLowerCase().includes(searchLower));
-            return nameMatches || specialtyMatches;
+            return t.nombre?.toLowerCase().includes(searchLower);
         });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.lastName || !formData.dni || formData.specialties.length === 0) {
-            showToast('Por favor completa todos los campos', 'error');
+        // Validación de campos requeridos
+        if (!formData.nombre || !formData.dni || !formData.email) {
+            showToast('Por favor completa todos los campos obligatorios', 'error');
+            return;
+        }
+
+        // Validar formato DNI (8 números + 1 letra mayúscula)
+        const dniRegex = /^\d{8}[A-Z]$/;
+        if (!dniRegex.test(formData.dni)) {
+            showToast('DNI inválido. Formato: 8 números + 1 letra mayúscula (ej: 12345678A)', 'error');
+            return;
+        }
+
+        // Validar email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            showToast('Email inválido', 'error');
             return;
         }
 
         try {
-            const fullName = `${formData.name} ${formData.lastName}`;
-
             const res = await teacherService.create({
-                name: fullName,
-                lastName: formData.lastName,
+                nombre: formData.nombre,
                 dni: formData.dni,
-                hiringYear: formData.year,
-                specialties: formData.specialties,
-                activities: [],
-                activityCount: 0,
-                imageUrl:
-                    formData.imageUrl ||
-                    `https://via.placeholder.com/150/FF6B35/FFFFFF?text=${formData.name[0]}${formData.lastName[0]}`,
-                isActive: true,
+                email: formData.email,
+                contratado: formData.contratado,
+                imagen: formData.imagen || 'https://via.placeholder.com/150/FF6B35/FFFFFF?text=PROF',
             });
 
             setTeachers([...teachers, res.data]);
@@ -94,27 +96,17 @@ const Profesores = () => {
 
     const resetForm = () => {
         setFormData({
-            name: '',
-            lastName: '',
+            nombre: '',
             dni: '',
-            year: new Date().getFullYear(),
-            specialties: [],
-            imageUrl: '',
+            email: '',
+            contratado: true,
+            imagen: '',
         });
     };
 
     const onClose = () => {
         setShowModal(false);
         resetForm();
-    };
-
-    const toggleSpecialty = (specialty) => {
-        setFormData(prev => ({
-            ...prev,
-            specialties: prev.specialties.includes(specialty)
-                ? prev.specialties.filter(s => s !== specialty)
-                : [...prev.specialties, specialty]
-        }));
     };
 
     return (
@@ -145,7 +137,7 @@ const Profesores = () => {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar por nombre o especialidad..."
+                    placeholder="Buscar profesor por nombre..."
                     className="w-full bg-zinc-800 border border-zinc-700 rounded px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#D4FF00] transition"
                 />
             </div>
@@ -194,59 +186,47 @@ const Profesores = () => {
 
                         <form onSubmit={handleSubmit} className="space-y-6">
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <input
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="Nombre"
-                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                                />
-
-                                <input
-                                    value={formData.lastName}
-                                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                    placeholder="Apellidos"
-                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                                />
-                            </div>
+                            <input
+                                value={formData.nombre}
+                                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                                placeholder="Nombre completo"
+                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                            />
 
                             <div className="grid grid-cols-2 gap-4">
                                 <input
                                     value={formData.dni}
                                     onChange={(e) => setFormData({ ...formData, dni: e.target.value.toUpperCase() })}
-                                    placeholder="DNI"
+                                    placeholder="DNI (ej: 12345678A)"
                                     className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                 />
 
                                 <input
-                                    type="number"
-                                    value={formData.year}
-                                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    placeholder="Email"
                                     className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                 />
                             </div>
 
-                            <div className="grid grid-cols-5 gap-2">
-                                {specialties.map(s => (
-                                    <button
-                                        key={s}
-                                        type="button"
-                                        onClick={() => toggleSpecialty(s)}
-                                        className={`px-3 py-2 rounded text-sm ${
-                                            formData.specialties.includes(s)
-                                                ? 'bg-[#D4FF00] text-black'
-                                                : 'bg-zinc-700 text-white'
-                                        }`}
-                                    >
-                                        {s}
-                                    </button>
-                                ))}
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.contratado}
+                                    onChange={(e) => setFormData({ ...formData, contratado: e.target.checked })}
+                                    className="w-5 h-5 cursor-pointer"
+                                    id="contratado"
+                                />
+                                <label htmlFor="contratado" className="text-white cursor-pointer">
+                                    Contratado
+                                </label>
                             </div>
 
                             <input
-                                value={formData.imageUrl}
-                                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                placeholder="URL imagen"
+                                value={formData.imagen}
+                                onChange={(e) => setFormData({ ...formData, imagen: e.target.value })}
+                                placeholder="URL imagen (opcional)"
                                 className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                             />
 
