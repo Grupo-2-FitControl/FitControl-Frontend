@@ -1,36 +1,39 @@
 import { useState, useEffect } from 'react';
-import { teacherService } from '../../services/api';
+import { teacherService } from '../../services/teacherService';
 import TeacherCard from '../../components/teachers/TeachersCard';
 import Toast from '../../components/teachers/Toast';
 import ScheduleModal from '../../components/teachers/ScheduleModal';
 import EditTeacherModal from '../../components/teachers/EditTeacherModal';
 
-import { PlusIcon } from '@heroicons/react/24/outline';
 import {
+    PlusIcon,
     CheckIcon,
     XMarkIcon,
-    ArrowPathIcon
+    ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 
 const Profesores = () => {
     const [teachers, setTeachers] = useState([]);
     const [loading, setLoading] = useState(true);
+
     const [toast, setToast] = useState(null);
     const [showModal, setShowModal] = useState(false);
+
     const [searchTerm, setSearchTerm] = useState('');
-
-    const [formData, setFormData] = useState({
-        nombre: '',
-        dni: '',
-        email: '',
-        contratado: true,
-        imagen: '',
-    });
-
     const [editTeacher, setEditTeacher] = useState(null);
     const [scheduleTeacher, setScheduleTeacher] = useState(null);
 
-    const showToast = (msg, type = 'success') => setToast({ msg, type });
+    const [formData, setFormData] = useState({
+        name: '',
+        dni: '',
+        hiring_year: new Date().getFullYear(),
+        is_active: true,
+        image_url: '',
+    });
+
+    // ✅ TOAST CORRECTO
+    const showToast = (message, type = 'success') =>
+        setToast({ message, type });
 
     const load = async () => {
         setLoading(true);
@@ -38,71 +41,93 @@ const Profesores = () => {
             const res = await teacherService.getAll();
             setTeachers(res.data);
         } catch (e) {
-            showToast(e.message, 'error');
+            showToast(e.message || 'Error al cargar', 'error');
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => { load(); }, []);
+    useEffect(() => {
+        load();
+    }, []);
 
+    // SOLO ACTIVOS + BUSCADOR
     const activeTeachers = teachers
-        .filter(t => t.contratado !== false)
-        .filter(t => {
-            const searchLower = searchTerm.toLowerCase();
-            return t.nombre?.toLowerCase().includes(searchLower);
-        });
+        .filter(t => t.is_active !== false && t.isActive !== false)
+        .filter(t =>
+            t.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
+    // ── CREAR ─────────────────────────────
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validación de campos requeridos
-        if (!formData.nombre || !formData.dni || !formData.email) {
-            showToast('Por favor completa todos los campos obligatorios', 'error');
+        if (!formData.name.trim() || !formData.dni.trim()) {
+            showToast('Nombre y DNI son obligatorios', 'error');
             return;
         }
 
-        // Validar formato DNI (8 números + 1 letra mayúscula)
         const dniRegex = /^\d{8}[A-Z]$/;
         if (!dniRegex.test(formData.dni)) {
-            showToast('DNI inválido. Formato: 8 números + 1 letra mayúscula (ej: 12345678A)', 'error');
-            return;
-        }
-
-        // Validar email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-            showToast('Email inválido', 'error');
+            showToast('DNI inválido', 'error');
             return;
         }
 
         try {
             const res = await teacherService.create({
-                nombre: formData.nombre,
-                dni: formData.dni,
-                email: formData.email,
-                contratado: formData.contratado,
-                imagen: formData.imagen || 'https://via.placeholder.com/150/FF6B35/FFFFFF?text=PROF',
+                ...formData,
+                hiring_year: parseInt(formData.hiring_year),
+                image_url: formData.image_url || '',
             });
 
-            setTeachers([...teachers, res.data]);
-            showToast('Profesor creado exitosamente', 'success');
+            setTeachers(prev => [...prev, res.data]);
+            showToast('Profesor creado correctamente');
+
             resetForm();
             setShowModal(false);
         } catch (e) {
-            showToast('Error al crear profesor', 'error');
+            showToast(e.message || 'Error al crear', 'error');
         }
     };
 
-    const resetForm = () => {
-        setFormData({
-            nombre: '',
-            dni: '',
-            email: '',
-            contratado: true,
-            imagen: '',
+    // ── ELIMINAR ───────────────────────────
+    const handleDelete = async (id) => {
+        if (!confirm('¿Eliminar este profesor?')) return;
+
+        try {
+            await teacherService.delete(id);
+            setTeachers(prev => prev.filter(t => t.id !== id));
+            showToast('Profesor eliminado');
+        } catch (e) {
+            showToast(e.message || 'Error al eliminar', 'error');
+        }
+    };
+
+    // ── GUARDAR EDICIÓN ────────────────────
+    const handleSaved = (updated) => {
+        setTeachers(prev =>
+            prev.map(t => (t.id === updated.id ? updated : t))
+        );
+        showToast('Profesor actualizado');
+        setEditTeacher(null);
+    };
+
+    // ── HORARIO (SOLO TOAST, SIN MODAL NI NAVEGACIÓN)
+    const handleSchedule = (teacher) => {
+        setToast({
+            message: `El horario de ${teacher.name} estará disponible próximamente`,
+            type: 'info',
         });
     };
+
+    const resetForm = () =>
+        setFormData({
+            name: '',
+            dni: '',
+            hiring_year: new Date().getFullYear(),
+            is_active: true,
+            image_url: '',
+        });
 
     const onClose = () => {
         setShowModal(false);
@@ -112,10 +137,11 @@ const Profesores = () => {
     return (
         <div className="p-6 bg-black min-h-screen text-white">
 
+            {/* HEADER */}
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-extrabold text-white">
-                        PROFESORES ACTIVOS
+                    <h1 className="text-2xl font-extrabold uppercase">
+                        Profesores Activos
                     </h1>
                     <p className="text-zinc-400 text-sm">
                         Equipo de instructores del gimnasio
@@ -124,170 +150,93 @@ const Profesores = () => {
 
                 <button
                     onClick={() => setShowModal(true)}
-                    title="Crear nuevo profesor"
-                    aria-label="Crear nuevo profesor"
-                    className="bg-[#D4FF00] text-black p-3 rounded font-bold hover:bg-[#D4FF00]/80 transition flex items-center justify-center"
+                    className="bg-[#D4FF00] text-black p-3 rounded font-bold"
                 >
                     <PlusIcon className="w-6 h-6" />
                 </button>
             </div>
 
-            <div className="mb-6">
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar profesor por nombre..."
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#D4FF00] transition"
-                />
-            </div>
+            {/* BUSCADOR */}
+            <input
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                placeholder="Buscar profesor..."
+                className="w-full bg-zinc-800 p-3 rounded mb-6"
+            />
 
+            {/* GRID */}
             {loading ? (
-                <div className="grid grid-cols-3 gap-4">
-                    {[1, 2, 3].map(i => (
-                        <div key={i} className="h-40 bg-zinc-800 animate-pulse rounded" />
-                    ))}
-                </div>
+                <p>Cargando...</p>
             ) : (
                 <div className="grid md:grid-cols-3 gap-4">
-                    {activeTeachers.length === 0 ? (
-                        <div className="text-center col-span-full">
-                            <p className="text-zinc-400 mb-4">
-                                No hay profesores activos registrados.
-                            </p>
-                            <button
-                                onClick={() => setShowModal(true)}
-                                className="bg-[#D4FF00] text-black px-4 py-2 rounded hover:bg-[#D4FF00]/80 transition"
-                            >
-                                Añadir primer profesor
+                    {activeTeachers.map(t => (
+                        <TeacherCard
+                            key={t.id}
+                            teacher={t}
+                            onEdit={setEditTeacher}
+                            onDelete={handleDelete}
+                            onSchedule={handleSchedule}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {/* MODAL CREAR */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="bg-zinc-900 p-6 rounded w-[400px]"
+                    >
+                        <input
+                            value={formData.name}
+                            onChange={e =>
+                                setFormData({ ...formData, name: e.target.value })
+                            }
+                            placeholder="Nombre"
+                            className="w-full p-2 mb-2"
+                        />
+
+                        <input
+                            value={formData.dni}
+                            onChange={e =>
+                                setFormData({
+                                    ...formData,
+                                    dni: e.target.value.toUpperCase(),
+                                })
+                            }
+                            placeholder="DNI"
+                            className="w-full p-2 mb-2"
+                        />
+
+                        <div className="flex justify-between mt-4">
+                            <button type="button" onClick={onClose}>
+                                Cancelar
+                            </button>
+
+                            <button type="submit">
+                                Guardar
                             </button>
                         </div>
-                    ) : (
-                        activeTeachers.map(t => (
-                            <TeacherCard
-                                key={t.id}
-                                teacher={t}
-                                onEdit={setEditTeacher}
-                                onDelete={() => { }}
-                                onSchedule={setScheduleTeacher}
-                            />
-                        ))
-                    )}
+                    </form>
                 </div>
             )}
 
-            {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 p-4 overflow-y-auto">
-                    <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 max-h-[90vh] overflow-y-auto">
-
-                        <h2 className="text-2xl font-extrabold text-[#D4FF00] mb-6 uppercase">
-                            Registrar Nuevo Profesor
-                        </h2>
-
-                        <form onSubmit={handleSubmit} className="space-y-6">
-
-                            <input
-                                value={formData.nombre}
-                                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                                placeholder="Nombre completo"
-                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                            />
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <input
-                                    value={formData.dni}
-                                    onChange={(e) => setFormData({ ...formData, dni: e.target.value.toUpperCase() })}
-                                    placeholder="DNI (ej: 12345678A)"
-                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                                />
-
-                                <input
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="Email"
-                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                                />
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.contratado}
-                                    onChange={(e) => setFormData({ ...formData, contratado: e.target.checked })}
-                                    className="w-5 h-5 cursor-pointer"
-                                    id="contratado"
-                                />
-                                <label htmlFor="contratado" className="text-white cursor-pointer">
-                                    Contratado
-                                </label>
-                            </div>
-
-                            <input
-                                value={formData.imagen}
-                                onChange={(e) => setFormData({ ...formData, imagen: e.target.value })}
-                                placeholder="URL imagen (opcional)"
-                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                            />
-
-                            <div className="flex justify-between items-center pt-4 gap-3">
-
-                                <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    title="Limpiar formulario"
-                                    className="bg-zinc-700 text-[#D4FF00] p-3 rounded flex items-center justify-center"
-                                >
-                                    <ArrowPathIcon className="w-5 h-5" />
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    title="Cancelar"
-                                    className="border border-zinc-600 text-white p-3 rounded flex items-center justify-center"
-                                >
-                                    <XMarkIcon className="w-5 h-5" />
-                                </button>
-
-                                <button
-                                    type="submit"
-                                    title="Guardar profesor"
-                                    className="bg-[#D4FF00] text-black p-3 rounded flex items-center justify-center"
-                                >
-                                    <CheckIcon className="w-5 h-5" />
-                                </button>
-
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {toast && (
-                <Toast
-                    message={toast.msg}
-                    type={toast.type}
-                    onClose={() => setToast(null)}
-                />
-            )}
-
-            {scheduleTeacher && (
-                <ScheduleModal
-                    teacher={scheduleTeacher}
-                    onClose={() => setScheduleTeacher(null)}
-                />
-            )}
-
+            {/* EDIT MODAL */}
             {editTeacher && (
                 <EditTeacherModal
                     teacher={editTeacher}
                     onClose={() => setEditTeacher(null)}
-                    onSave={(data) => {
-                        console.log("Actualizar backend:", data);
-                        setEditTeacher(null);
-                    }}
+                    onSaved={handleSaved}
+                />
+            )}
+
+            {/* TOAST */}
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
                 />
             )}
         </div>
