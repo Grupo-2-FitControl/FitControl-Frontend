@@ -5,7 +5,7 @@
   --text-secondary: #ff5722;
   --background: #000000;
 }
-*{
+* {
   box-sizing: border-box;
 }
 .text-primary {
@@ -17,10 +17,14 @@
 .background {
   background-color: var(--background);
 }
-.background-primary{
+.background-primary {
   background-color: var(--text-primary);
 }
 li:hover {
+  color: black;
+  width: 100%;
   background-color: var(--text-primary);
- box-shadow: 5px 5px 0 #95b201;
+  box-shadow: 5px 5px 0 #95b201;
+  text-align: center;
+  font-weight: bold;
 }
