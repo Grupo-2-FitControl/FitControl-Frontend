@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { teacherService } from '../../services/teacherService';
 import { XMarkIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 
-// Muestra las actividades reales del profesor desde GET /teachers/:id/activities
-// Activity fields: id | title | description | price | start_date | image_url | teacher_id
 const ScheduleModal = ({ teacher, onClose }) => {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -31,7 +29,6 @@ const ScheduleModal = ({ teacher, onClose }) => {
         >
             <div className="bg-zinc-900 border border-zinc-700 rounded-lg w-full max-w-lg max-h-[85vh] flex flex-col">
 
-                {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-zinc-800">
                     <div className="flex items-center gap-3">
                         <CalendarDaysIcon className="w-6 h-6 text-[#D4FF00]" />
@@ -47,7 +44,6 @@ const ScheduleModal = ({ teacher, onClose }) => {
                     </button>
                 </div>
 
-                {/* Body */}
                 <div className="overflow-y-auto flex-1 p-6 space-y-3">
                     {loading && (
                         <div className="space-y-3">
@@ -103,7 +99,6 @@ const ScheduleModal = ({ teacher, onClose }) => {
                     })}
                 </div>
 
-                {/* Footer */}
                 <div className="p-4 border-t border-zinc-800">
                     <button
                         onClick={onClose}

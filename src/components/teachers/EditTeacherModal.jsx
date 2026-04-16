@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { teacherService } from '../../services/teacherService';
 import { CheckIcon, XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
-// Teacher DB fields: id | name | dni | hiring_year | is_active | image_url
+
 const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
     const [form, setForm] = useState({
         name: teacher?.name || teacher?.nombre || '',
