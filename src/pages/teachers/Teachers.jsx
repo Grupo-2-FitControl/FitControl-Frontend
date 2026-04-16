@@ -110,7 +110,7 @@ const Profesores = () => {
     };
 
     return (
-        <div className="p-6">
+        <div className="p-6 bg-black min-h-screen text-white">
 
             <div className="flex justify-between items-center mb-6">
                 <div>
