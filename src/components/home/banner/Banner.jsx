@@ -13,6 +13,7 @@ function Banner() {
           +Nueva Actividad
         </button>
       </header>
+    
      
     </section>
   );

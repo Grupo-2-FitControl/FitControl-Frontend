@@ -29,11 +29,12 @@
 .border-secondary{
   border: 3px solid var(--text-secondary);
 }
+li{
+  width:100%;
+}
 li:hover {
   color: black;
-  width: 100%;
   background-color: var(--text-primary);
   box-shadow: 5px 5px 0 #95b201;
-  text-align: center;
   font-weight: bold;
 }

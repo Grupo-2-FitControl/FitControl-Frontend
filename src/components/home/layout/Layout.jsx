@@ -5,7 +5,7 @@ function Layout() {
     <div className="flex min-h-screen flex-col lg:flex-row">
       <Navbar />
 
-      <main className="flex-1">
+      <main className="lg:ml-64 flex-1">
         <Outlet />
       </main>
     </div>
