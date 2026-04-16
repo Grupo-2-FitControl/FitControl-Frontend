@@ -1,12 +1,11 @@
 # 🏋️‍♂️ FitControl Frontend
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│           GESTIÓN DE ACTIVIDADES DE GIMNASIO                 │
-│                  FitControl v0.0.0                           │
-└──────────────────────────────────────────────────────────────┘
-```
-
+![Vite](https://img.shields.io/badge/Vite-8.0.4-646CFF?logo=vite&logoColor=white)
+![React](https://img.shields.io/badge/React-19.2.4-61DAFB?logo=react&logoColor=black)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.2.2-38B2AC?logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-in--development-orange)
+![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen)
 ---
 
 ## 🚀 Overview
@@ -263,6 +262,10 @@ Proyecto educativo (Bootcamp)
 ## 📌 Estado del proyecto
 
 🚧 En desarrollo activo (rama `dev`)
+
+![Build](https://img.shields.io/github/actions/workflow/status/Grupo-2-FitControl/FitControl-Frontend/main.yml)
+![Last Commit](https://img.shields.io/github/last-commit/Grupo-2-FitControl/FitControl-Frontend)
+![Repo Size](https://img.shields.io/github/repo-size/Grupo-2-FitControl/FitControl-Frontend)
 
 ---
 
