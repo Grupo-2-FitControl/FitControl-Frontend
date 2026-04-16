@@ -11,7 +11,7 @@ function Navbar() {
 
   return (
     <header>
-      <div className="bg-mist-800 w-full p-4 flex justify-between items-center text-white lg:hidden">
+      <div className="fixed top-0 left-0 w-full z-50 bg-mist-800 p-4 flex justify-between items-center text-white lg:hidden">
         <button className="text-2xl" onClick={() => setVisible(true)}>
           ☰
         </button>
