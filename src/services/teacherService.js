@@ -1,7 +1,3 @@
-// =======================
-// MOCK DATA (TEACHERS)
-// =======================
-
 let mockTeachers = [
   {
     id: 1,
@@ -50,14 +46,10 @@ let mockTeachers = [
   },
 ];
 
-// =======================
-// OPTIONAL: SIMULATE LATENCY
-// =======================
+
 const delay = (ms = 200) => new Promise(res => setTimeout(res, ms));
 
-// =======================
-// TEACHER SERVICE (CRUD)
-// =======================
+
 export const teacherService = {
   // GET ALL
   getAll: async () => {
@@ -65,14 +57,13 @@ export const teacherService = {
     return { data: mockTeachers };
   },
 
-  // GET BY ID
   getById: async (id) => {
     await delay();
     const teacher = mockTeachers.find(t => t.id === id);
     return { data: teacher ?? null };
   },
 
-  // CREATE
+ 
   create: async (data) => {
     await delay();
 
@@ -91,7 +82,7 @@ export const teacherService = {
     return { data: newTeacher };
   },
 
-  // UPDATE
+
   update: async (id, data) => {
     await delay();
 
@@ -108,7 +99,7 @@ export const teacherService = {
     return { data: updated };
   },
 
-  // DELETE
+
   delete: async (id) => {
     await delay();
 

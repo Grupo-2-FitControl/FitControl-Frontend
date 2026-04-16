@@ -28,11 +28,9 @@ const Teachers = () => {
         image_url: '',
     });
 
-    // ── TOAST ─────────────────────────────
     const showToast = (message, type = 'success') =>
         setToast({ message, type });
 
-    // ── LOAD ──────────────────────────────
     const loadTeachers = async () => {
         setIsLoading(true);
         try {
@@ -49,14 +47,12 @@ const Teachers = () => {
         loadTeachers();
     }, []);
 
-    // ── FILTER ────────────────────────────
     const filteredTeachers = teachers
         .filter(t => t.is_active !== false)
         .filter(t =>
             t.name?.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-    // ── CREATE ────────────────────────────
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -87,7 +83,6 @@ const Teachers = () => {
         }
     };
 
-    // ── DELETE ────────────────────────────
     const handleDelete = async (id) => {
         if (!confirm('Delete this teacher?')) return;
 
@@ -100,7 +95,6 @@ const Teachers = () => {
         }
     };
 
-    // ── UPDATE ────────────────────────────
     const handleSaved = (updatedTeacher) => {
         setTeachers(prev =>
             prev.map(t => (t.id === updatedTeacher.id ? updatedTeacher : t))
@@ -109,12 +103,10 @@ const Teachers = () => {
         setEditingTeacher(null);
     };
 
-    // ── SCHEDULE (simple toast) ───────────
     const handleSchedule = (teacher) => {
         showToast(`Schedule for ${teacher.name} coming soon`, 'info');
     };
 
-    // ── RESET FORM ────────────────────────
     const resetForm = () =>
         setFormData({
             name: '',
@@ -127,7 +119,6 @@ const Teachers = () => {
     return (
         <div className="p-6 bg-black min-h-screen text-white">
 
-            {/* HEADER */}
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-bold uppercase">
@@ -146,7 +137,6 @@ const Teachers = () => {
                 </button>
             </div>
 
-            {/* SEARCH */}
             <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -154,7 +144,6 @@ const Teachers = () => {
                 className="w-full bg-zinc-800 p-3 rounded mb-6"
             />
 
-            {/* LIST */}
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
@@ -171,7 +160,6 @@ const Teachers = () => {
                 </div>
             )}
 
-            {/* CREATE MODAL (UI ANTIGUO + MODELO NUEVO) */}
             {isCreateModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 p-4 overflow-y-auto">
                     <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 max-h-[90vh] overflow-y-auto">
@@ -182,7 +170,6 @@ const Teachers = () => {
 
                         <form onSubmit={handleSubmit} className="space-y-6">
 
-                            {/* NAME */}
                             <input
                                 value={formData.name}
                                 onChange={(e) =>
@@ -192,7 +179,6 @@ const Teachers = () => {
                                 className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                             />
 
-                            {/* DNI + YEAR */}
                             <div className="grid grid-cols-2 gap-4">
 
                                 <input
@@ -221,7 +207,6 @@ const Teachers = () => {
                                 />
                             </div>
 
-                            {/* ACTIVE */}
                             <div className="flex items-center gap-3">
                                 <input
                                     type="checkbox"
@@ -239,7 +224,6 @@ const Teachers = () => {
                                 </label>
                             </div>
 
-                            {/* IMAGE */}
                             <input
                                 value={formData.image_url}
                                 onChange={(e) =>
@@ -252,30 +236,41 @@ const Teachers = () => {
                                 className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                             />
 
-                            {/* ACTIONS */}
                             <div className="flex justify-between items-center pt-4 gap-3">
 
                                 <button
                                     type="button"
                                     onClick={resetForm}
-                                    className="bg-zinc-700 text-[#D4FF00] p-3 rounded"
+                                    className="group bg-zinc-700 text-[#D4FF00] p-3 rounded relative"
                                 >
                                     <ArrowPathIcon className="w-5 h-5" />
+
+                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                        Reiniciar formulario
+                                    </span>
                                 </button>
 
                                 <button
                                     type="button"
                                     onClick={() => setIsCreateModalOpen(false)}
-                                    className="border border-zinc-600 text-white p-3 rounded"
+                                    className="group border border-zinc-600 text-white p-3 rounded relative"
                                 >
                                     <XMarkIcon className="w-5 h-5" />
+
+                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                        Cerrar
+                                    </span>
                                 </button>
 
                                 <button
                                     type="submit"
-                                    className="bg-[#D4FF00] text-black p-3 rounded"
+                                    className="group bg-[#D4FF00] text-black p-3 rounded relative"
                                 >
                                     <CheckIcon className="w-5 h-5" />
+
+                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                        Guardar
+                                    </span>
                                 </button>
 
                             </div>
