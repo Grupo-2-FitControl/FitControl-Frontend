@@ -20,6 +20,15 @@
 .background-primary {
   background-color: var(--text-primary);
 }
+.background-secondary {
+  background-color: var(--text-secondary);
+}
+.border-primary{
+  border: 3px solid var(--text-primary);
+}
+.border-secondary{
+  border: 3px solid var(--text-secondary);
+}
 li:hover {
   color: black;
   width: 100%;

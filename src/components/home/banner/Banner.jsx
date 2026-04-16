@@ -1,3 +1,4 @@
+import ActivityCard from "./ActivityCard";
 function Banner() {
 
   return (
@@ -12,7 +13,7 @@ function Banner() {
           +Nueva Actividad
         </button>
       </header>
-      
+     
     </section>
   );
 }
