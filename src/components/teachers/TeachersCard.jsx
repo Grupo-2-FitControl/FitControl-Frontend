@@ -7,16 +7,16 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
     dni = "",
     imagen = "",
     activities = [],
-    especialidades = []
   } = teacher;
 
   const activeCount = activities?.length ?? teacher.activityCount ?? 0;
 
   return (
-    <div className="bg-mist-800 border border-mist-600 rounded-none p-6 flex flex-col gap-5 hover:border-[#D4FF00]/40 transition-all duration-300 group">
-    
+    <div className="relative bg-mist-800 border border-mist-600 rounded-none p-6 pb-16 flex flex-col gap-5 hover:border-[#D4FF00]/40 transition-all duration-300">
+
+      {/* CONTENIDO */}
       <div className="flex gap-4">
-        <div className="relative">
+        <div>
           {imagen ? (
             <img 
               src={imagen} 
@@ -25,68 +25,61 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
             />
           ) : (
             <div className="w-20 h-20 rounded-full bg-[#262626] flex items-center justify-center text-[#FF5722] font-bold text-2xl border-2 border-[#FF5722]">
-              {nombre && nombre.length > 0 ? nombre.toUpperCase() : '?'}
+              {nombre ? nombre[0].toUpperCase() : '?'}
             </div>
           )}
         </div>
 
         <div className="flex flex-col justify-center">
-          <h3 className="text-xl font-black text-white tracking-tighter leading-tight">
+          <h3 className="text-xl font-black text-white">
             {nombre ? nombre.toUpperCase() : 'SIN NOMBRE'}
           </h3>
-          <p className="text-xs text-zinc-500 mb-2">{dni}</p>
-          <div className="flex">
-            <span className="text-[10px] bg-[#D4FF00] text-black font-black px-2 py-0.5 tracking-tighter">
-              CONTRATADO
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <p className="text-[10px] text-[#FF5722] font-black tracking-[0.2em] mb-2">ESPECIALIDADES</p>
-        <div className="flex gap-2 flex-wrap">
-          {especialidades && especialidades.length > 0 ? (
-            especialidades.map((esp, index) => (
-              <span 
-                key={index} 
-                className="border border-[#FF5722] text-[#FF5722] text-[10px] font-bold px-2 py-1 hover:bg-[#FF5722] hover:text-white transition-colors cursor-default"
-              >
-                {esp.toUpperCase()}
-              </span>
-            ))
-          ) : (
-            <span className="text-zinc-600 text-[10px]">SIN ESPECIALIDADES</span>
-          )}
+          <p className="text-xs text-zinc-500">{dni}</p>
+          <span className="mt-1 text-[10px] bg-[#D4FF00] text-black font-black px-2 py-0.5 w-fit">
+            CONTRATADO
+          </span>
         </div>
       </div>
 
       <div className="h-px bg-[#262626]" />
 
       <div>
-        <p className="text-[10px] text-zinc-500 font-black tracking-[0.2em]">CLASES ASIGNADAS</p>
+        <p className="text-[10px] text-zinc-500 font-black tracking-widest">
+          CLASES ASIGNADAS
+        </p>
         <p className="text-2xl font-black text-[#FF5722] italic">
           {activeCount} ACTIVIDADES
         </p>
       </div>
 
-      <div className="flex gap-2 items-center mt-auto">
+      {/* BOTÓN HORARIO - IZQUIERDA */}
+      <div className="absolute bottom-4 left-4 group z-10">
         <button
           onClick={() => onSchedule(teacher)}
-          className="flex-1 border-2 border-[#D4FF00] text-[#D4FF00] hover:bg-[#D4FF00] hover:text-black font-black py-2 px-4 flex items-center justify-center gap-2 transition-all uppercase italic text-sm"
+          className="bg-[#D4FF00] text-black p-3 hover:scale-110 transition"
         >
           <CalendarDaysIcon className="w-5 h-5" />
-          Ver Horario
         </button>
-        
+
+        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+          Ver horario
+        </span>
+      </div>
+
+      {/* BOTÓN EDITAR - DERECHA */}
+      <div className="absolute bottom-4 right-4 group z-10">
         <button
           onClick={() => onEdit(teacher)}
-          className="p-2 text-[#D4FF00] hover:scale-110 transition-transform"
-          title="Editar profesor"
+          className="bg-[#FF5722] text-white p-3 hover:scale-110 transition"
         >
-          <PencilSquareIcon className="w-6 h-6" />
+          <PencilSquareIcon className="w-5 h-5" />
         </button>
+
+        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+          Editar profesor
+        </span>
       </div>
+
     </div>
   );
 };
