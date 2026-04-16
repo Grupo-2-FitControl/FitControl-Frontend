@@ -269,9 +269,22 @@ Proyecto educativo (Bootcamp)
 
 ---
 
-## 👥 Equipo
+## 👨‍💻 Equipo de Desarrollo
 
 **Grupo 2 - FitControl**
+
+<div align="center">
+ 
+| 👤    | Nombre             | Rol           | GitHub                                                    |
+| ----- | ------------------ | ------------- | --------------------------------------------------------- |
+| 🧑‍💻 | **Alberto García** | Developer     | [AlbertoDeveloper9](https://github.com/AlbertoDeveloper9) |
+| 👩‍💻 | **Melissa Gómez**  | Developer     | [ResilenteMG](https://github.com/ResilenteMG)             |
+| 👩‍💻 | **Ana Morandeira** | Developer     | [@ana-morandeira](https://github.com/ana-morandeira)      |
+| 🧑‍💻 | **Javier Galvañ**  | Scrum Master  | [javiertunsi7](https://github.com/javiertunsi7)           |
+| 👩‍💻 | **María Regueiro** | Product Owner | [@Mariaregue-spec](https://github.com/Mariaregue-spec)    |
+
+
+</div>
 
 ---
 
