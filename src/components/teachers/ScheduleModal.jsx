@@ -17,7 +17,6 @@ const ScheduleModal = ({ teacher, onClose }) => {
                     Aquí se mostrará el horario cuando conectes el backend
                 </p>
 
-                {/* FUTURO: render de clases */}
                 <div className="bg-zinc-800 p-3 rounded text-zinc-400 text-sm">
                     Sin datos de horario
                 </div>

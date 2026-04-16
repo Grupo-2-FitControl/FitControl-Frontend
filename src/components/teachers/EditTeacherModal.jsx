@@ -1,4 +1,8 @@
 import { useState } from "react";
+import {
+    CheckIcon,
+    XMarkIcon
+} from '@heroicons/react/24/outline';
 
 const specialtiesList = ['Aquafit', 'Bike', 'Circuit', 'CrossTraining', 'Pilates', 'Zumba'];
 
@@ -29,6 +33,8 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
     };
 
     const handleSubmit = () => {
+        if (!form.name || !form.lastName || !form.dni) return;
+
         const fullName = `${form.name} ${form.lastName}`;
 
         onSave({
@@ -46,7 +52,7 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
                     EDITAR PROFESOR
                 </h2>
 
-                {/* Nombre y Apellidos */}
+                
                 <div className="grid grid-cols-2 gap-2">
                     <input
                         name="name"
@@ -64,7 +70,6 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
                     />
                 </div>
 
-                {/* DNI */}
                 <input
                     name="dni"
                     value={form.dni}
@@ -73,7 +78,6 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
                     className="w-full mt-2 p-2 bg-zinc-800 text-white rounded"
                 />
 
-                {/* Año */}
                 <input
                     type="number"
                     name="year"
@@ -82,7 +86,6 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
                     className="w-full mt-2 p-2 bg-zinc-800 text-white rounded"
                 />
 
-                {/* Especialidades */}
                 <div className="mt-3">
                     <p className="text-[#FF5722] text-sm mb-2">ESPECIALIDADES</p>
                     <div className="flex flex-wrap gap-2">
@@ -103,7 +106,6 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
                     </div>
                 </div>
 
-                {/* Imagen */}
                 <input
                     name="imageUrl"
                     value={form.imageUrl}
@@ -112,21 +114,28 @@ const EditTeacherModal = ({ teacher, onClose, onSave }) => {
                     className="w-full mt-3 p-2 bg-zinc-800 text-white rounded"
                 />
 
-                {/* Botones */}
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-3 mt-4 justify-between items-center">
+
                     <button
+                        type="button"
                         onClick={handleSubmit}
-                        className="flex-1 bg-[#FF5722] text-black py-2 rounded font-bold"
+                        title="Guardar cambios"
+                        aria-label="Guardar cambios"
+                        className="flex-1 bg-[#FF5722] text-black p-3 rounded font-bold hover:opacity-90 transition flex items-center justify-center"
                     >
-                        Guardar
+                        <CheckIcon className="w-5 h-5" />
                     </button>
 
                     <button
+                        type="button"
                         onClick={onClose}
-                        className="flex-1 border border-zinc-600 text-white py-2 rounded"
+                        title="Cancelar edición"
+                        aria-label="Cancelar edición"
+                        className="flex-1 border border-zinc-600 text-white p-3 rounded hover:bg-zinc-700 transition flex items-center justify-center"
                     >
-                        Cancelar
+                        <XMarkIcon className="w-5 h-5" />
                     </button>
+
                 </div>
             </div>
         </div>

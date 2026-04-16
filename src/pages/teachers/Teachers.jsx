@@ -4,6 +4,7 @@ import TeacherCard from '../../components/teachers/TeachersCard';
 import Toast from '../../components/teachers/Toast';
 import ScheduleModal from '../../components/teachers/ScheduleModal';
 import EditTeacherModal from '../../components/teachers/EditTeacherModal';
+
 import { PlusIcon } from '@heroicons/react/24/outline';
 import {
     CheckIcon,
@@ -19,6 +20,7 @@ const Profesores = () => {
     const [toast, setToast] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+
     const [formData, setFormData] = useState({
         name: '',
         lastName: '',
@@ -27,6 +29,7 @@ const Profesores = () => {
         specialties: [],
         imageUrl: '',
     });
+
     const [editTeacher, setEditTeacher] = useState(null);
     const [scheduleTeacher, setScheduleTeacher] = useState(null);
 
@@ -57,12 +60,15 @@ const Profesores = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!formData.name || !formData.lastName || !formData.dni || formData.specialties.length === 0) {
             showToast('Por favor completa todos los campos', 'error');
             return;
         }
+
         try {
             const fullName = `${formData.name} ${formData.lastName}`;
+
             const res = await teacherService.create({
                 name: fullName,
                 lastName: formData.lastName,
@@ -71,9 +77,12 @@ const Profesores = () => {
                 specialties: formData.specialties,
                 activities: [],
                 activityCount: 0,
-                imageUrl: formData.imageUrl || `https://via.placeholder.com/150/FF6B35/FFFFFF?text=${formData.name[0]}${formData.lastName[0]}`,
+                imageUrl:
+                    formData.imageUrl ||
+                    `https://via.placeholder.com/150/FF6B35/FFFFFF?text=${formData.name[0]}${formData.lastName[0]}`,
                 isActive: true,
             });
+
             setTeachers([...teachers, res.data]);
             showToast('Profesor creado exitosamente', 'success');
             resetForm();
@@ -94,7 +103,7 @@ const Profesores = () => {
         });
     };
 
-    const closeModal = () => {
+    const onClose = () => {
         setShowModal(false);
         resetForm();
     };
@@ -111,7 +120,6 @@ const Profesores = () => {
     return (
         <div className="p-6">
 
-            {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-extrabold text-white">
@@ -124,8 +132,8 @@ const Profesores = () => {
 
                 <button
                     onClick={() => setShowModal(true)}
-                    title="Crear un nuevo profesor"
-                    aria-label="Crear un nuevo profesor"
+                    title="Crear nuevo profesor"
+                    aria-label="Crear nuevo profesor"
                     className="bg-[#D4FF00] text-black p-3 rounded font-bold hover:bg-[#D4FF00]/80 transition flex items-center justify-center"
                 >
                     <PlusIcon className="w-6 h-6" />
@@ -187,114 +195,91 @@ const Profesores = () => {
                         <form onSubmit={handleSubmit} className="space-y-6">
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
-                                        NOMBRE *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
-                                    />
-                                </div>
+                                <input
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    placeholder="Nombre"
+                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                                />
 
-                                <div>
-                                    <label className="block text-[#D4FF00] text-sm font-bold mb-2">
-                                        APELLIDOS *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.lastName}
-                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                        className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:bg-zinc-700"
-                                    />
-                                </div>
+                                <input
+                                    value={formData.lastName}
+                                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                    placeholder="Apellidos"
+                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <input
-                                    type="text"
                                     value={formData.dni}
                                     onChange={(e) => setFormData({ ...formData, dni: e.target.value.toUpperCase() })}
-                                    className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                     placeholder="DNI"
+                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                 />
 
                                 <input
                                     type="number"
                                     value={formData.year}
                                     onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                                    className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-[#D4FF00] text-sm font-bold mb-3">
-                                    ESPECIALIDADES *
-                                </label>
-
-                                <div className="grid grid-cols-5 gap-2">
-                                    {specialties.map(s => (
-                                        <button
-                                            key={s}
-                                            type="button"
-                                            onClick={() => toggleSpecialty(s)}
-                                            className={`px-3 py-2 rounded text-sm ${formData.specialties.includes(s)
+                            <div className="grid grid-cols-5 gap-2">
+                                {specialties.map(s => (
+                                    <button
+                                        key={s}
+                                        type="button"
+                                        onClick={() => toggleSpecialty(s)}
+                                        className={`px-3 py-2 rounded text-sm ${
+                                            formData.specialties.includes(s)
                                                 ? 'bg-[#D4FF00] text-black'
                                                 : 'bg-zinc-700 text-white'
-                                                }`}
-                                        >
-                                            {s}
-                                        </button>
-                                    ))}
-                                </div>
+                                        }`}
+                                    >
+                                        {s}
+                                    </button>
+                                ))}
                             </div>
 
                             <input
-                                type="url"
                                 value={formData.imageUrl}
                                 onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                 placeholder="URL imagen"
+                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                             />
 
-                            {/* Botones */}
                             <div className="flex justify-between items-center pt-4 gap-3">
 
-                                {/* LIMPIAR */}
                                 <button
                                     type="button"
                                     onClick={resetForm}
                                     title="Limpiar formulario"
-                                    aria-label="Limpiar formulario"
-                                    className="bg-zinc-700 text-[#D4FF00] p-3 rounded hover:bg-zinc-600 transition flex items-center justify-center"
+                                    className="bg-zinc-700 text-[#D4FF00] p-3 rounded flex items-center justify-center"
                                 >
                                     <ArrowPathIcon className="w-5 h-5" />
                                 </button>
 
-                                {/* CANCELAR */}
                                 <button
                                     type="button"
-                                    onClick={closeModal}
-                                    title="Cancelar y cerrar"
-                                    aria-label="Cancelar y cerrar"
-                                    className="bg-zinc-700 text-white p-3 rounded hover:bg-zinc-600 transition flex items-center justify-center"
+                                    onClick={onClose}
+                                    title="Cancelar"
+                                    className="border border-zinc-600 text-white p-3 rounded flex items-center justify-center"
                                 >
                                     <XMarkIcon className="w-5 h-5" />
                                 </button>
 
-                                {/* GUARDAR */}
                                 <button
                                     type="submit"
                                     title="Guardar profesor"
-                                    aria-label="Guardar profesor"
-                                    className="bg-[#D4FF00] text-black p-3 rounded hover:bg-[#C1E500] transition flex items-center justify-center"
+                                    className="bg-[#D4FF00] text-black p-3 rounded flex items-center justify-center"
                                 >
                                     <CheckIcon className="w-5 h-5" />
                                 </button>
 
                             </div>
+
                         </form>
                     </div>
                 </div>
