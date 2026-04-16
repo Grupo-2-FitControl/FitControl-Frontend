@@ -280,7 +280,6 @@ const Teachers = () => {
                 </div>
             )}
 
-            {/* EDIT MODAL */}
             {editingTeacher && (
                 <EditTeacherModal
                     teacher={editingTeacher}
@@ -289,7 +288,6 @@ const Teachers = () => {
                 />
             )}
 
-            {/* TOAST */}
             {toast && (
                 <Toast
                     message={toast.message}

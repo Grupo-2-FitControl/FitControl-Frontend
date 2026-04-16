@@ -1,32 +1,39 @@
-import { useState } from 'react';
-import { teacherService } from '../../services/teacherService';
-import { CheckIcon, XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
-
+import { useState } from "react";
+import { teacherService } from "../../services/teacherService";
+import {
+    CheckIcon,
+    XMarkIcon,
+    ArrowPathIcon,
+} from "@heroicons/react/24/outline";
 
 const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
     const [form, setForm] = useState({
-        name: teacher?.name || teacher?.nombre || '',
-        dni: teacher?.dni || '',
-        hiring_year: teacher?.hiring_year || teacher?.hiringYear || new Date().getFullYear(),
-        is_active: teacher?.is_active ?? teacher?.isActive ?? teacher?.contratado ?? true,
-        image_url: teacher?.image_url || teacher?.imageUrl || teacher?.imagen || '',
+        name: teacher?.name || teacher?.nombre || "",
+        dni: teacher?.dni || "",
+        hiring_year:
+            teacher?.hiring_year || teacher?.hiringYear || new Date().getFullYear(),
+        is_active:
+            teacher?.is_active ?? teacher?.isActive ?? teacher?.contratado ?? true,
+        image_url: teacher?.image_url || teacher?.imageUrl || teacher?.imagen || "",
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+        setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
     };
 
     const handleSubmit = async () => {
         if (!form.name.trim() || !form.dni.trim()) {
-            setError('Nombre y DNI son obligatorios');
+            setError("Nombre y DNI son obligatorios");
             return;
         }
         const dniRegex = /^\d{8}[A-Z]$/;
         if (!dniRegex.test(form.dni)) {
-            setError('DNI inválido. Formato: 8 números + 1 letra mayúscula (ej: 12345678A)');
+            setError(
+                "DNI inválido. Formato: 8 números + 1 letra mayúscula (ej: 12345678A)",
+            );
             return;
         }
         setLoading(true);
@@ -46,11 +53,14 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
 
     const reset = () => {
         setForm({
-            name: teacher?.name || teacher?.nombre || '',
-            dni: teacher?.dni || '',
-            hiring_year: teacher?.hiring_year || teacher?.hiringYear || new Date().getFullYear(),
-            is_active: teacher?.is_active ?? teacher?.isActive ?? teacher?.contratado ?? true,
-            image_url: teacher?.image_url || teacher?.imageUrl || teacher?.imagen || '',
+            name: teacher?.name || teacher?.nombre || "",
+            dni: teacher?.dni || "",
+            hiring_year:
+                teacher?.hiring_year || teacher?.hiringYear || new Date().getFullYear(),
+            is_active:
+                teacher?.is_active ?? teacher?.isActive ?? teacher?.contratado ?? true,
+            image_url:
+                teacher?.image_url || teacher?.imageUrl || teacher?.imagen || "",
         });
         setError(null);
     };
@@ -58,7 +68,7 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
     return (
         <div
             className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto"
-            onClick={e => e.target === e.currentTarget && onClose()}
+            onClick={(e) => e.target === e.currentTarget && onClose()}
         >
             <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-lg border border-zinc-700">
                 <h2 className="text-xl font-black text-[#FF5722] mb-5 uppercase tracking-widest">
@@ -94,7 +104,11 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
                         <input
                             name="dni"
                             value={form.dni}
-                            onChange={e => handleChange({ target: { name: 'dni', value: e.target.value.toUpperCase() } })}
+                            onChange={(e) =>
+                                handleChange({
+                                    target: { name: "dni", value: e.target.value.toUpperCase() },
+                                })
+                            }
                             placeholder="12345678A"
                             className="w-full p-2 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-[#FF5722] transition"
                         />
@@ -108,7 +122,8 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
                             name="hiring_year"
                             value={form.hiring_year}
                             onChange={handleChange}
-                            min="2000" max="2030"
+                            min="2000"
+                            max="2030"
                             className="w-full p-2 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-[#FF5722] transition"
                         />
                     </div>
@@ -138,43 +153,56 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
                         onChange={handleChange}
                         className="w-4 h-4 cursor-pointer accent-[#FF5722]"
                     />
-                    <label htmlFor="is_active_edit" className="text-white text-sm cursor-pointer">
+                    <label
+                        htmlFor="is_active_edit"
+                        className="text-white text-sm cursor-pointer"
+                    >
                         Profesor activo (contratado)
                     </label>
                 </div>
 
-                {/* Acciones */}
                 <div className="flex gap-3 items-center">
                     <button
                         type="button"
                         onClick={reset}
-                        title="Restaurar valores originales"
-                        className="bg-zinc-700 text-[#D4FF00] p-3 rounded flex items-center justify-center hover:bg-zinc-600 transition"
+                        className="group relative bg-zinc-700 text-[#D4FF00] p-3 rounded flex items-center justify-center hover:bg-zinc-600 transition"
                     >
                         <ArrowPathIcon className="w-5 h-5" />
+
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                            Restaurar valores originales
+                        </span>
                     </button>
 
                     <button
                         type="button"
                         onClick={onClose}
-                        title="Cancelar"
-                        className="flex-1 border border-zinc-600 text-white p-3 rounded flex items-center justify-center hover:bg-zinc-800 transition"
+                        className="group relative flex-1 border border-zinc-600 text-white p-3 rounded flex items-center justify-center hover:bg-zinc-800 transition"
                     >
                         <XMarkIcon className="w-5 h-5" />
+
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                            Cancelar
+                        </span>
                     </button>
 
                     <button
                         type="button"
                         onClick={handleSubmit}
                         disabled={loading}
-                        title="Guardar cambios"
-                        className="flex-1 bg-[#FF5722] text-white p-3 rounded font-bold flex items-center justify-center hover:opacity-90 transition disabled:opacity-50"
+                        className="group relative flex-1 bg-[#FF5722] text-white p-3 rounded font-bold flex items-center justify-center hover:opacity-90 transition disabled:opacity-50"
                     >
                         {loading ? (
-                            <span className="text-sm font-black tracking-widest">GUARDANDO...</span>
+                            <span className="text-sm font-black tracking-widest">
+                                GUARDANDO...
+                            </span>
                         ) : (
                             <CheckIcon className="w-5 h-5" />
                         )}
+
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                            Guardar cambios
+                        </span>
                     </button>
                 </div>
             </div>
