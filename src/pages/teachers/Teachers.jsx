@@ -122,10 +122,10 @@ const Teachers = () => {
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-bold uppercase">
-                        Teachers
+                        Profesores
                     </h1>
                     <p className="text-zinc-400 text-sm">
-                        Gym teachers management
+                        Gestión de profesores
                     </p>
                 </div>
 
@@ -140,7 +140,7 @@ const Teachers = () => {
             <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search teacher..."
+                placeholder="Buscar profesor..."
                 className="w-full bg-zinc-800 p-3 rounded mb-6"
             />
 
