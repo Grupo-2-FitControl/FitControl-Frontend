@@ -1,14 +1,17 @@
 import Activities from "./pages/Activities";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Teachers from "./pages/teachers/Teachers.jsx";
+import Layout from "./components/layout/Layout.jsx";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/teachers" />} />
-      <Route path="/activities" element={<Activities />} />
-      <Route path="/teachers" element={<Teachers />} />
+      <Route path="/" element={<Layout />}>
+       
+        <Route path="activities" element={<Activities />} />
+        <Route path="/teachers" element={<Teachers />} />
+      </Route>
     </Routes>
-  )
+  );
 }
 export default App;
