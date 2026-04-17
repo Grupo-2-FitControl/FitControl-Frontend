@@ -1,10 +1,25 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function Navbar() {
+  const [visible, setVisible] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    setVisible(false);
+  }, [location.pathname]);
+
   return (
     <header className="shadow-md sticky top-0 z-50 background flex flex-col lg:flex-row justify-between items-center px-6">
       <div className="w-full flex justify-between items-center gap-4 border-b-2 border-gray-500 p-4 lg:border-none lg:w-auto">
-        <button className="text-primary lg:hidden">☰</button>
+        <button
+          className="text-primary lg:hidden"
+          onClick={() => setVisible((prev) => !prev)}
+        >
+          {visible ? "✕" : "☰"}
+        </button>
 
         <div className="flex items-center gap-4 text-center">
           <img
@@ -24,30 +39,62 @@ function Navbar() {
         </div>
       </div>
 
-      <nav className="p-4 w-full lg:w-auto">
-        <ul className="flex flex-col gap-6 items-center w-full text-center lg:flex-row lg:gap-10">
-          <li className="nav-link">
-            <Link to={"/"}>
+      <nav
+        className={`transition-all duration-300 ease-in-out p-4 w-full lg:w-auto ${visible ? "block" : "hidden"} lg:block lg:opacity-100 z-50`}
+      >
+        <ul className="flex flex-col gap-3 items-center w-full text-center lg:flex-row lg:gap-10">
+          <li>
+            <NavLink
+              to={"/"}
+              onClick={() => setVisible(false)}
+              className={({ isActive }) =>
+                isActive ? "nav-active" : "nav-link"
+              }
+            >
               Inicio
-            </Link>
+            </NavLink>
           </li>
-          <li className="nav-link">
-            <Link to={"/activities"}>
+          <li>
+            <NavLink
+              to={"/activities"}
+              onClick={() => setVisible(false)}
+              className={({ isActive }) =>
+                isActive ? "nav-active" : "nav-link"
+              }
+            >
               Actividades
-            </Link>
+            </NavLink>
           </li>
-          <li className="nav-link">
-            <Link to={"/teachers"}>
+          <li>
+            <NavLink
+              to={"/teachers"}
+              onClick={() => setVisible(false)}
+              className={({ isActive }) =>
+                isActive ? "nav-active" : "nav-link"
+              }
+            >
               Profesores
-            </Link>
+            </NavLink>
           </li>
-          <li className="nav-link">
-            <Link to={"/users"}>
+          <li>
+            <NavLink
+              to={"/users"}
+              onClick={() => setVisible(false)}
+              className={({ isActive }) =>
+                isActive ? "nav-active" : "nav-link"
+              }
+            >
               Usuarios
-            </Link>
+            </NavLink>
           </li>
         </ul>
       </nav>
+      {visible && (
+        <div
+          className="fixed inset-0 bg-black/30 lg:hidden"
+          onClick={() => setVisible(false)}
+        />
+      )}
     </header>
   );
 }
