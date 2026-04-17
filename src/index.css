@@ -1,19 +1,69 @@
 @import "tailwindcss";
 
 @layer utilities {
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px) translateX(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0) translateX(0);
-        }
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px) translateX(20px);
     }
 
-    .animate-slideIn {
-        animation: slideIn 0.3s ease-out;
+    to {
+      opacity: 1;
+      transform: translateY(0) translateX(0);
     }
+  }
+
+  .animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+  }
+}
+
+:root {
+  --text-primary: #ffffff;
+  --text-secondary: #d4ff00;
+  --text-terciary: #ff5722;
+  --background: #000000;
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.background {
+  background-color: var(--background);
+}
+.background-primary {
+  background-color: var(--text-primary);
+}
+.background-secondary {
+  background-color: var(--text-secondary);
+}
+.border-primary {
+  border: 3px solid var(--text-primary);
+}
+.border-secondary {
+  border: 3px solid var(--text-secondary);
+}
+.nav-link {
+  width: 80%;
+  color: var(--text-primary);
+  transition: all 0.3s;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  transform: translate(-2px, -2px);
+  color: black;
+  background-color: var(--text-secondary);
+  box-shadow: 5px 5px 0 #95b201;
+}
+.nav-active {
+  background: #d4ff00;
+  color: black;
+  font-weight: bold;
+  padding: 10px;
+  box-shadow: 5px 5px 0 #95b201;
 }

@@ -5,69 +5,86 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.2.2-38B2AC?logo=tailwindcss&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-in--development-orange)
-![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen)
+
 ---
 
 ## 🚀 Overview
 
-**FitControl** es una aplicación web diseñada para la **gestión integral de actividades en gimnasios**, enfocada en entornos de recepción (presencial y telefónica).
+**FitControl** es una aplicación web para la gestión integral de gimnasios, combinando un **dashboard analítico** con módulos operativos para la administración diaria.
 
-Permite gestionar profesores, usuarios y actividades, facilitando la inscripción y el control operativo diario.
+Permite gestionar profesores, actividades y miembros, facilitando la operativa de recepción y el control del negocio en tiempo real.
 
 ---
 
 ## 🎯 Objetivo
 
-Optimizar la operativa del gimnasio mediante una interfaz rápida, clara y eficiente para:
+Centralizar la gestión del gimnasio en una plataforma única que permite:
 
-* Gestión de profesores
-* Gestión de actividades
-* Inscripción de usuarios
-* Control de estado de miembros
-
----
-
-## 🛠️ Tech Stack
-
-| Tecnología   | Versión | Uso                |
-| ------------ | ------- | ------------------ |
-| React        | 19.2.4  | UI                 |
-| Vite         | 8.0.4   | Dev server & build |
-| TailwindCSS  | 4.2.2   | Estilos            |
-| React Router | 7.14.1  | Routing            |
-| Axios        | 1.15.0  | HTTP client        |
-| Heroicons    | 2.2.0   | Iconografía        |
+- 📊 Visualización de métricas en tiempo real (dashboard)
+- 👨‍🏫 Gestión de profesores
+- 🏋️ Gestión de actividades
+- 👥 Control de miembros e inscripciones
+- ⚡ Operativa rápida desde recepción
 
 ---
 
-## 📦 Arquitectura
+## 🧠 Arquitectura
 
-* Arquitectura basada en componentes
-* Separación clara de responsabilidades:
+Arquitectura basada en componentes reutilizables:
 
-  * UI (`components`)
-  * Vistas (`pages`)
-  * Lógica (`services`)
-* Comunicación con backend mediante API REST
+### 📦 Capas del sistema
+
+- **Pages**
+  - Home (Dashboard)
+  - Teachers
+  - Activities
+
+- **Components**
+  - Cards
+  - Modals
+  - Charts
+  - Alerts
+  - Tables
+
+- **Services**
+  - dashboardService
+  - activityService
+  - teacherService
+  - enrollmentService
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del proyecto
 
 ```
 src/
 ├── pages/
+│   ├── home/
+│   │   └── Home.jsx
 │   ├── teachers/
 │   │   └── Teachers.jsx
-│   └── Activities.jsx
+│   ├── activities/
+│   │   └── Activities.jsx
 │
 ├── components/
+│   ├── home/
+│   │   ├── StatCard.jsx
+│   │   ├── DashboardChart.jsx
+│   │   ├── RecentActivity.jsx
+│   │   ├── AlertsPanel.jsx
+│   │   └── WelcomeHeader.jsx
+│   │
 │   ├── teachers/
 │   │   ├── TeachersCard.jsx
 │   │   ├── EditTeacherModal.jsx
 │   │   ├── ScheduleModal.jsx
 │   │   └── Toast.jsx
-│   └── ActivityCard.jsx
+│   │
+│   ├── activities/
+│   │   ├── ActivityCard.jsx
+│   │   ├── CreateActivityModal.jsx
+│   │   ├── EditActivityModal.jsx
+│   │   └── ViewMembersModal.jsx
 │
 ├── services/
 │   └── api.js
@@ -78,42 +95,44 @@ src/
 │
 ├── App.jsx
 ├── main.jsx
-├── index.css
-└── App.css
+└── index.css
 ```
 
 ---
 
-## 🌿 Estrategia de ramas
+## 🏠 Módulo Home (Dashboard)
 
-| Rama     | Uso                    |
-| -------- | ---------------------- |
-| `main`   | Producción             |
-| `dev`    | Desarrollo             |
-| `feat/*` | Nuevas funcionalidades |
-| `fix/*`  | Correcciones           |
+### 📊 Funcionalidades
 
-Ejemplo:
+- KPIs del gimnasio en tiempo real
+- Gráficas de actividad e ingresos
+- Alertas del sistema
+- Accesos rápidos a módulos
+- Últimas actividades y miembros
+- Profesores destacados
 
-```
-feat/teachers
-```
+### 📈 KPIs principales
+
+- Profesores activos
+- Miembros activos
+- Actividades futuras
+- Ingresos mensuales
+- Capacidad utilizada
+- Nuevas inscripciones
 
 ---
 
-## ✨ Funcionalidades
+## 👨‍🏫 Módulo Teachers
 
-### 👨‍🏫 Módulo Teachers
+### ✔️ Funcionalidades
 
-#### ✔️ Implementado
+- Listado de profesores activos
+- Creación de profesores
+- Edición mediante modal
+- Visualización de horarios
+- Búsqueda por nombre
 
-* Listado de profesores activos
-* Creación de profesores
-* Edición mediante modal
-* Visualización de horarios
-* Búsqueda por nombre
-
-#### 📋 Modelo de datos
+### 📋 Modelo de datos
 
 ```js
 {
@@ -125,12 +144,39 @@ feat/teachers
 }
 ```
 
-#### 🔐 Validaciones
+### 🔐 Validaciones
 
-* DNI → `/^\d{8}[A-Z]$/`
-* Email → formato válido
-* Campos obligatorios
-* Feedback visual (toasts)
+- DNI → `/^\d{8}[A-Z]$/`
+- Email → formato válido
+- Campos obligatorios
+- Feedback visual (toasts)
+
+---
+
+## 🏋️ Módulo Activities
+
+### ✨ Funcionalidades
+
+- CRUD completo de actividades
+- Filtros por profesor, fecha y estado
+- Buscador integrado
+- Gestión de capacidad
+- Inscripción de miembros
+- Visualización de asistentes
+
+### 📋 Campos principales
+
+```js
+{
+  titulo,
+  descripcion,
+  precio,
+  fecha,
+  profesor_id,
+  capacidad,
+  imagen
+}
+```
 
 ---
 
@@ -142,9 +188,7 @@ feat/teachers
 http://localhost:8080
 ```
 
-### Principales recursos
-
-#### Teachers
+### Teachers
 
 ```
 GET    /api/teachers
@@ -154,7 +198,7 @@ PUT    /api/teachers/{id}
 DELETE /api/teachers/{id}
 ```
 
-#### Activities
+### Activities
 
 ```
 GET    /api/activities
@@ -162,14 +206,14 @@ GET    /api/activities/future
 POST   /api/activities
 ```
 
-#### Members
+### Members
 
 ```
 GET    /api/members
 POST   /api/members
 ```
 
-#### Enrollments
+### Enrollments
 
 ```
 POST   /api/enrollments/{activityId}/{memberId}
@@ -180,25 +224,25 @@ DELETE /api/enrollments/{activityId}/{memberId}
 
 ## 🧠 Reglas de negocio
 
-| Regla                 | Resultado |
-| --------------------- | --------- |
-| Usuario inactivo      | 403       |
-| Inscripción duplicada | 409       |
-| Máx. 3 actividades    | 409       |
-| Profesor inactivo     | 409       |
-| DNI/email duplicado   | 409       |
+| Regla | Código |
+|------|--------|
+| Usuario inactivo | 403 |
+| Inscripción duplicada | 409 |
+| Máx. 3 actividades | 409 |
+| Profesor inactivo | 409 |
+| DNI/email duplicado | 409 |
 
 ---
 
 ## 🎨 Diseño
 
-| Color      | Código    |
-| ---------- | --------- |
-| Primary    | `#D4FF00` |
-| Secondary  | `#FF5722` |
-| Dark       | `#262626` |
+| Color | Código |
+|------|--------|
+| Primary | `#D4FF00` |
+| Secondary | `#FF5722` |
+| Dark | `#262626` |
 | Background | `#0F0F0F` |
-| Neutral    | `#3f3f46` |
+| Neutral | `#3f3f46` |
 
 ---
 
@@ -227,20 +271,20 @@ npm run dev
 ## 🧩 Modelo relacional
 
 ```
-TEACHERS  (1) ─────→ (M) ACTIVITIES
-MEMBERS   (M) ←────→ (M) ACTIVITIES
+TEACHERS (1) ─────→ (M) ACTIVITIES
+MEMBERS  (M) ←──→ (M) ACTIVITIES
 ```
 
 ---
 
 ## 🗺️ Roadmap
 
-* Integración con backend real
-* CRUD completo (Members, Activities)
-* Sistema de inscripciones
-* Autenticación
-* Responsive design
-* Testing
+- CRUD Members
+- Autenticación
+- Backend real integration
+- Paginación
+- Filtros avanzados
+- Testing
 
 ---
 
@@ -271,10 +315,16 @@ Proyecto educativo (Bootcamp)
 
 ## 👥 Equipo
 
-**Grupo 2 - FitControl**
+| Nombre | Rol | GitHub |
+|--------|-----|--------|
+| Alberto García | Developer | [AlbertoDeveloper9](https://github.com/AlbertoDeveloper9) |
+| Melissa Gómez | Developer | [ResilenteMG](https://github.com/ResilenteMG) |
+| Ana Morandeira | Developer | [@ana-morandeira](https://github.com/ana-morandeira) |
+| Javier Galvañ | Scrum Master | [javiertunsi7](https://github.com/javiertunsi7) |
+| María Regueiro | Product Owner | [@Mariaregue-spec](https://github.com/Mariaregue-spec) |
 
 ---
 
 ## 🕓 Última actualización
 
-16 Abril 2026
+Abril 2026

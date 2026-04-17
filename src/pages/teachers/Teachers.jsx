@@ -1,211 +1,208 @@
 import { useState, useEffect } from 'react';
-import { teacherService } from '../../services/api';
+import { teacherService } from '../../services/teacherService';
 import TeacherCard from '../../components/teachers/TeachersCard';
 import Toast from '../../components/teachers/Toast';
-import ScheduleModal from '../../components/teachers/ScheduleModal';
 import EditTeacherModal from '../../components/teachers/EditTeacherModal';
 
-import { PlusIcon } from '@heroicons/react/24/outline';
 import {
+    PlusIcon,
     CheckIcon,
     XMarkIcon,
     ArrowPathIcon
 } from '@heroicons/react/24/outline';
 
-const Profesores = () => {
+const Teachers = () => {
     const [teachers, setTeachers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+
     const [toast, setToast] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [editingTeacher, setEditingTeacher] = useState(null);
 
     const [formData, setFormData] = useState({
-        nombre: '',
+        name: '',
         dni: '',
-        email: '',
-        contratado: true,
-        imagen: '',
+        hiring_year: new Date().getFullYear(),
+        is_active: true,
+        image_url: '',
     });
 
-    const [editTeacher, setEditTeacher] = useState(null);
-    const [scheduleTeacher, setScheduleTeacher] = useState(null);
+    const showToast = (message, type = 'success') =>
+        setToast({ message, type });
 
-    const showToast = (msg, type = 'success') => setToast({ msg, type });
-
-    const load = async () => {
-        setLoading(true);
+    const loadTeachers = async () => {
+        setIsLoading(true);
         try {
             const res = await teacherService.getAll();
             setTeachers(res.data);
         } catch (e) {
-            showToast(e.message, 'error');
+            showToast(e.message || 'Error loading teachers', 'error');
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
-    useEffect(() => { load(); }, []);
+    useEffect(() => {
+        loadTeachers();
+    }, []);
 
-    const activeTeachers = teachers
-        .filter(t => t.contratado !== false)
-        .filter(t => {
-            const searchLower = searchTerm.toLowerCase();
-            return t.nombre?.toLowerCase().includes(searchLower);
-        });
+    const filteredTeachers = teachers
+        .filter(t => t.is_active !== false)
+        .filter(t =>
+            t.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validación de campos requeridos
-        if (!formData.nombre || !formData.dni || !formData.email) {
-            showToast('Por favor completa todos los campos obligatorios', 'error');
+        if (!formData.name.trim() || !formData.dni.trim()) {
+            showToast('Name and DNI are required', 'error');
             return;
         }
 
-        // Validar formato DNI (8 números + 1 letra mayúscula)
         const dniRegex = /^\d{8}[A-Z]$/;
         if (!dniRegex.test(formData.dni)) {
-            showToast('DNI inválido. Formato: 8 números + 1 letra mayúscula (ej: 12345678A)', 'error');
-            return;
-        }
-
-        // Validar email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-            showToast('Email inválido', 'error');
+            showToast('Invalid DNI format (12345678A)', 'error');
             return;
         }
 
         try {
             const res = await teacherService.create({
-                nombre: formData.nombre,
-                dni: formData.dni,
-                email: formData.email,
-                contratado: formData.contratado,
-                imagen: formData.imagen || 'https://via.placeholder.com/150/FF6B35/FFFFFF?text=PROF',
+                ...formData,
+                hiring_year: Number(formData.hiring_year),
             });
 
-            setTeachers([...teachers, res.data]);
-            showToast('Profesor creado exitosamente', 'success');
+            setTeachers(prev => [...prev, res.data]);
+            showToast('Teacher created successfully');
+
             resetForm();
-            setShowModal(false);
+            setIsCreateModalOpen(false);
         } catch (e) {
-            showToast('Error al crear profesor', 'error');
+            showToast(e.message || 'Error creating teacher', 'error');
         }
     };
 
-    const resetForm = () => {
-        setFormData({
-            nombre: '',
-            dni: '',
-            email: '',
-            contratado: true,
-            imagen: '',
-        });
+    const handleDelete = async (id) => {
+        if (!confirm('Delete this teacher?')) return;
+
+        try {
+            await teacherService.delete(id);
+            setTeachers(prev => prev.filter(t => t.id !== id));
+            showToast('Teacher deleted');
+        } catch (e) {
+            showToast(e.message || 'Error deleting teacher', 'error');
+        }
     };
 
-    const onClose = () => {
-        setShowModal(false);
-        resetForm();
+    const handleSaved = (updatedTeacher) => {
+        setTeachers(prev =>
+            prev.map(t => (t.id === updatedTeacher.id ? updatedTeacher : t))
+        );
+        showToast('Teacher updated');
+        setEditingTeacher(null);
     };
+
+    const handleSchedule = (teacher) => {
+        showToast(`Schedule for ${teacher.name} coming soon`, 'info');
+    };
+
+    const resetForm = () =>
+        setFormData({
+            name: '',
+            dni: '',
+            hiring_year: new Date().getFullYear(),
+            is_active: true,
+            image_url: '',
+        });
 
     return (
         <div className="p-6 bg-black min-h-screen text-white">
 
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-extrabold text-white">
-                        PROFESORES ACTIVOS
+                    <h1 className="text-2xl font-bold uppercase">
+                        Profesores
                     </h1>
                     <p className="text-zinc-400 text-sm">
-                        Equipo de instructores del gimnasio
+                        Gestión de profesores
                     </p>
                 </div>
 
                 <button
-                    onClick={() => setShowModal(true)}
-                    title="Crear nuevo profesor"
-                    aria-label="Crear nuevo profesor"
-                    className="bg-[#D4FF00] text-black p-3 rounded font-bold hover:bg-[#D4FF00]/80 transition flex items-center justify-center"
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="bg-[#D4FF00] text-black p-3 rounded flex items-center justify-center"
                 >
                     <PlusIcon className="w-6 h-6" />
                 </button>
             </div>
 
-            <div className="mb-6">
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar profesor por nombre..."
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#D4FF00] transition"
-                />
-            </div>
+            <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar profesor..."
+                className="w-full bg-zinc-800 p-3 rounded mb-6"
+            />
 
-            {loading ? (
-                <div className="grid grid-cols-3 gap-4">
-                    {[1, 2, 3].map(i => (
-                        <div key={i} className="h-40 bg-zinc-800 animate-pulse rounded" />
-                    ))}
-                </div>
+            {isLoading ? (
+                <p>Loading...</p>
             ) : (
                 <div className="grid md:grid-cols-3 gap-4">
-                    {activeTeachers.length === 0 ? (
-                        <div className="text-center col-span-full">
-                            <p className="text-zinc-400 mb-4">
-                                No hay profesores activos registrados.
-                            </p>
-                            <button
-                                onClick={() => setShowModal(true)}
-                                className="bg-[#D4FF00] text-black px-4 py-2 rounded hover:bg-[#D4FF00]/80 transition"
-                            >
-                                Añadir primer profesor
-                            </button>
-                        </div>
-                    ) : (
-                        activeTeachers.map(t => (
-                            <TeacherCard
-                                key={t.id}
-                                teacher={t}
-                                onEdit={setEditTeacher}
-                                onDelete={() => { }}
-                                onSchedule={setScheduleTeacher}
-                            />
-                        ))
-                    )}
+                    {filteredTeachers.map(t => (
+                        <TeacherCard
+                            key={t.id}
+                            teacher={t}
+                            onEdit={setEditingTeacher}
+                            onDelete={handleDelete}
+                            onSchedule={handleSchedule}
+                        />
+                    ))}
                 </div>
             )}
 
-            {showModal && (
+            {isCreateModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 p-4 overflow-y-auto">
                     <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 max-h-[90vh] overflow-y-auto">
 
                         <h2 className="text-2xl font-extrabold text-[#D4FF00] mb-6 uppercase">
-                            Registrar Nuevo Profesor
+                            Nuevo Profesor
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
 
                             <input
-                                value={formData.nombre}
-                                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                                placeholder="Nombre completo"
+                                value={formData.name}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, name: e.target.value })
+                                }
+                                placeholder="Nombre y apellidos"
                                 className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                             />
 
                             <div className="grid grid-cols-2 gap-4">
+
                                 <input
                                     value={formData.dni}
-                                    onChange={(e) => setFormData({ ...formData, dni: e.target.value.toUpperCase() })}
-                                    placeholder="DNI (ej: 12345678A)"
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            dni: e.target.value.toUpperCase(),
+                                        })
+                                    }
+                                    placeholder="DNI (12345678A)"
                                     className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                 />
 
                                 <input
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="Email"
+                                    type="number"
+                                    value={formData.hiring_year}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            hiring_year: e.target.value,
+                                        })
+                                    }
+                                    placeholder="Hiring year"
                                     className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                                 />
                             </div>
@@ -213,20 +210,29 @@ const Profesores = () => {
                             <div className="flex items-center gap-3">
                                 <input
                                     type="checkbox"
-                                    checked={formData.contratado}
-                                    onChange={(e) => setFormData({ ...formData, contratado: e.target.checked })}
+                                    checked={formData.is_active}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            is_active: e.target.checked,
+                                        })
+                                    }
                                     className="w-5 h-5 cursor-pointer"
-                                    id="contratado"
                                 />
-                                <label htmlFor="contratado" className="text-white cursor-pointer">
-                                    Contratado
+                                <label className="text-white">
+                                    Activo
                                 </label>
                             </div>
 
                             <input
-                                value={formData.imagen}
-                                onChange={(e) => setFormData({ ...formData, imagen: e.target.value })}
-                                placeholder="URL imagen (opcional)"
+                                value={formData.image_url}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        image_url: e.target.value,
+                                    })
+                                }
+                                placeholder="Imagen URL (opcional)"
                                 className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
                             />
 
@@ -235,27 +241,36 @@ const Profesores = () => {
                                 <button
                                     type="button"
                                     onClick={resetForm}
-                                    title="Limpiar formulario"
-                                    className="bg-zinc-700 text-[#D4FF00] p-3 rounded flex items-center justify-center"
+                                    className="group bg-zinc-700 text-[#D4FF00] p-3 rounded relative"
                                 >
                                     <ArrowPathIcon className="w-5 h-5" />
+
+                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                        Reiniciar formulario
+                                    </span>
                                 </button>
 
                                 <button
                                     type="button"
-                                    onClick={onClose}
-                                    title="Cancelar"
-                                    className="border border-zinc-600 text-white p-3 rounded flex items-center justify-center"
+                                    onClick={() => setIsCreateModalOpen(false)}
+                                    className="group border border-zinc-600 text-white p-3 rounded relative"
                                 >
                                     <XMarkIcon className="w-5 h-5" />
+
+                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                        Cerrar
+                                    </span>
                                 </button>
 
                                 <button
                                     type="submit"
-                                    title="Guardar profesor"
-                                    className="bg-[#D4FF00] text-black p-3 rounded flex items-center justify-center"
+                                    className="group bg-[#D4FF00] text-black p-3 rounded relative"
                                 >
                                     <CheckIcon className="w-5 h-5" />
+
+                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                        Guardar
+                                    </span>
                                 </button>
 
                             </div>
@@ -265,33 +280,23 @@ const Profesores = () => {
                 </div>
             )}
 
+            {editingTeacher && (
+                <EditTeacherModal
+                    teacher={editingTeacher}
+                    onClose={() => setEditingTeacher(null)}
+                    onSaved={handleSaved}
+                />
+            )}
+
             {toast && (
                 <Toast
-                    message={toast.msg}
+                    message={toast.message}
                     type={toast.type}
                     onClose={() => setToast(null)}
-                />
-            )}
-
-            {scheduleTeacher && (
-                <ScheduleModal
-                    teacher={scheduleTeacher}
-                    onClose={() => setScheduleTeacher(null)}
-                />
-            )}
-
-            {editTeacher && (
-                <EditTeacherModal
-                    teacher={editTeacher}
-                    onClose={() => setEditTeacher(null)}
-                    onSave={(data) => {
-                        console.log("Actualizar backend:", data);
-                        setEditTeacher(null);
-                    }}
                 />
             )}
         </div>
     );
 };
 
-export default Profesores;
+export default Teachers;
