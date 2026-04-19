@@ -1,11 +1,12 @@
 import Banner from "../../components/homepage/Banner";
 import SummaryPhilosophy from "../../components/homepage/summaryInfo/SummaryPhilosophy";
+import Features from "../../components/homepage/featurecard/Features";
 function Homepage() {
   return (
     <article className="flex flex-col background">
       <Banner />
-      <section className="h-screen bg-orange-500">
-        <div className=" grid grid-cols-1 mx-auto p-6 gap-4 md:grid-cols-2 md:px-20 lg:grid-cols-4">
+      <section className="w-full lg:w-[90%] mx-auto p-6 ">
+        <div className=" grid grid-cols-1 mx-auto  gap-4 md:grid-cols-2  lg:grid-cols-4">
           <SummaryPhilosophy
             title={"8+"}
             description={"Años transformando vidas"}
@@ -31,6 +32,9 @@ function Homepage() {
             textColorTitle={"text-[#ff5722]"}
           />
         </div>
+      </section>
+      <section className="w-full lg:w-[90%] mx-auto p-6">
+        <Features/>
       </section>
     </article>
   );
