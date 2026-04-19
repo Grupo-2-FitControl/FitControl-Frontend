@@ -35,10 +35,10 @@
   background-color: var(--background);
 }
 .background-primary {
-  background-color: var(--text-primary);
+  background-color: var(--text-secondary);
 }
 .background-secondary {
-  background-color: var(--text-secondary);
+  background-color: var(--text-terciary);
 }
 .border-primary {
   border: 3px solid var(--text-primary);
@@ -47,7 +47,7 @@
   border: 3px solid var(--text-secondary);
 }
 .nav-link {
-  width: 80%;
+  width: 100%;
   color: var(--text-primary);
   transition: all 0.3s;
   padding: 10px;
@@ -55,10 +55,7 @@
 }
 
 .nav-link:hover {
-  transform: translate(-2px, -2px);
-  color: black;
-  background-color: var(--text-secondary);
-  box-shadow: 5px 5px 0 #95b201;
+  background-color: rgba(55, 55, 55, 0.5);
 }
 .nav-active {
   background: #d4ff00;

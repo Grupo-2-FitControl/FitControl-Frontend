@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        gym: ['"Bebas Neue"', 'sans-serif'],
+      },
       colors: {
         "fit-green": "#CCFF00",
         "fit-dark": "#0A0A0A",
