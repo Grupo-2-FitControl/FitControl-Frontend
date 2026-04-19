@@ -1,6 +1,6 @@
 function Banner() {
   return (
-    <section className="relative min-h-screen flex items-center bg-[url('/src/assets/bannerBackground.jpg')] bg-cover bg-center p-6 md:p-20">
+    <section className="flex-1 flex items-center bg-[url('/src/assets/bannerBackground.jpg')] bg-cover bg-center p-6 md:p-20 min-h-[calc(100dvh-var(--navbar-height))]">
       
 
       <div className="relative font-bold flex flex-col gap-8 max-w-3xl">

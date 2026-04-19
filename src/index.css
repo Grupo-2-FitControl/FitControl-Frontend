@@ -23,6 +23,8 @@
   --text-secondary: #d4ff00;
   --text-terciary: #ff5722;
   --background: #000000;
+
+  --navbar-height: 80px;
 }
 
 .text-primary {

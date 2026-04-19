@@ -19,7 +19,7 @@ function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-black shadow-md ">
-        <div className="flex justify-between items-center p-10 border-b-2 border-mist-700">
+        <div className="flex justify-between items-center px-6 py-4 md:px-10 md:py-6 border-b-2 border-mist-700">
           <div className="flex items-center gap-4">
             <img
               src="src/assets/LogoFitControlGym.png"
