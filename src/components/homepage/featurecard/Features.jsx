@@ -25,14 +25,14 @@ export default function Features() {
   ];
 
   return (
-    <section className="bg-[#111111] py-20 px-6  border-3 border-[#d4ff00]">
+    <section className="bg-[#111111] py-20 border-3 border-[#d4ff00] w-[90%] mx-auto px-6">
       <div className="max-w-4xl mx-auto  ">
         
         <header className="flex flex-col items-center text-center mb-16">
           <span className="bg-[#FF5722] text-white text-xs font-bold px-4 py-2 uppercase tracking-tighter mb-6">
             ¿Por qué Fit Control?
           </span>
-          <h2 className="text-white text-4xl md:text-6xl font-black uppercase mb-6 max-w-4xl tracking-tighter">
+          <h2 className="text-white text-2xl md:text-6xl font-black uppercase mb-6 max-w-4xl tracking-tighter">
             Todo lo que necesitas para triunfar
           </h2>
           <p className="text-zinc-400 text-lg md:text-xl max-w-2xl">
