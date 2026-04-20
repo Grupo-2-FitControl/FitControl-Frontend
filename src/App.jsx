@@ -7,14 +7,6 @@ import Homepage from "./pages/homepage/Homepage.jsx";
 function App() {
   return (
     <Routes>
-      
-      <Route path="/" element={<Navigate to="/activities" />} />
-      
-      
-      <Route path="/activities" element={<Activities />} />
-      <Route path="/teachers" element={<Teachers />} />
-      
-      <Route path="*" element={<Navigate to="/activities" />} />
       <Route path="/" element={<Layout />}>
         <Route index element={<Homepage />} />
         <Route path="activities" element={<Activities />} />
