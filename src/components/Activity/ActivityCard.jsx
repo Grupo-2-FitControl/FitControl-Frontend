@@ -1,17 +1,22 @@
 import React from "react";
-
+import { useNavigate } from "react-router-dom";
 const ActivityCard = ({
+  id,
   name,
   coach,
   description,
   contact,
   image,
   coachImage,
-}) => {
+}) => {  const navigate = useNavigate();
   return (
-    <div className="bg-[#242526] border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
+    <div 
+      onClick={() => navigate(`/activities/${id}`)}
+      className="bg-[#242526] border border-gray-800 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:border-[#CCFF00] hover:shadow-[0_0_20px_rgba(204,255,0,0.2)] hover:-translate-y-2 flex flex-col h-full"
+    >
       <div className="h-1/2 w-full overflow-hidden">
         <img src={image} className="w-full h-full object-cover" alt={name} />
+        
       </div>
 
       <div className="h-1/2 p-5 flex flex-row gap-4">
