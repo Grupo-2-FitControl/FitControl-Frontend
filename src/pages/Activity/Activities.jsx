@@ -134,12 +134,28 @@ function Activities() {
         <h1 className="text-[#CCFF00] text-5xl font-black uppercase italic mb-16 border-l-8 border-[#CCFF00] pl-6">
           ACTIVIDADES
         </h1>
-        <button
-          onClick={() => setShowModal(true)}
-          className="mb-8 w-12 h-12 flex items-center justify-center bg-[#CCFF00] hover:bg-[#b8e600] rounded-full text-black shadow-lg transition-transform active:scale-95"
-        >
-          <PlusIcon className="w-6 h-6" />
-        </button>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 w-full">
+  <div className="relative w-full md:max-w-md group">
+    <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+      <svg className="w-5 h-5 text-gray-500 group-focus-within:text-[#CCFF00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+    <input
+      type="text"
+      placeholder="BUSCAR ACTIVIDAD..."
+      className="w-full bg-[#111] border border-gray-800 text-white text-[10px] font-bold tracking-widest rounded-xl py-4 pl-12 pr-4 outline-none focus:border-[#CCFF00] focus:shadow-[0_0_15px_rgba(204,255,0,0.1)] transition-all uppercase"
+      onChange={(e) => setSearchTerm(e.target.value)} 
+    />
+  </div>
+
+  <button 
+    onClick={() => setShowModal(true)}
+    className="flex items-center justify-center bg-[#CCFF00] hover:bg-[#b8e600] text-black w-12 h-12 rounded-xl transition-all hover:scale-110 shadow-[0_0_20px_rgba(204,255,0,0.2)] active:scale-95"
+  >
+    <PlusIcon className="w-6 h-6" />
+  </button>
+</div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {misActividades.map((act) => (
