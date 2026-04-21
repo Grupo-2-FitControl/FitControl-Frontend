@@ -70,7 +70,7 @@
 - imagen (URL)
 ```
 
-### Members (Usuarios)
+### Users (Usuarios)
 ```sql
 - id (PK)
 - nombre
@@ -92,10 +92,10 @@
 - teacher_id (FK)
 ```
 
-### Activity_Member (Inscripciones - M2M)
+### Activity_Users (Inscripciones - M2M)
 ```sql
 - activity_id (FK)
-- member_id (FK)
+- users_id (FK)
 ```
 
 ---
@@ -127,22 +127,22 @@ PUT    /api/activities/{id}
 DELETE /api/activities/{id}
 ```
 
-### MEMBERS - `/api/members`
+### USERS - `/api/users`
 ```
-GET    /api/members
-GET    /api/members/active
-GET    /api/members/{id}
-GET    /api/members/{id}/activities
+GET    /api/users
+GET    /api/users/active
+GET    /api/users/{id}
+GET    /api/users/{id}/activities
 
-POST   /api/members
-PUT    /api/members/{id}
-DELETE /api/members/{id}
+POST   /api/users
+PUT    /api/users/{id}
+DELETE /api/users/{id}
 ```
 
 ### ENROLLMENTS - `/api/enrollments`
 ```
-POST   /api/enrollments/{activityId}/{memberId}
-DELETE /api/enrollments/{activityId}/{memberId}
+POST   /api/enrollments/{activityId}/{usersId}
+DELETE /api/enrollments/{activityId}/{usersId}
 ```
 
 ---
@@ -219,12 +219,12 @@ npm run preview    # Vista previa de build
 ## 📝 Roadmap
 
 - [ ] Conectar API real (http://localhost:8080)
-- [ ] CRUD completo Members (Usuarios)
+- [ ] CRUD completo Users (Usuarios)
 - [ ] CRUD completo Activities
 - [ ] Módulo de Inscripciones
 - [ ] Vistas especializadas:
   - [ ] Cursos futuros
-  - [ ] Mis actividades (member)
+  - [ ] Mis actividades (users)
   - [ ] Alumnos por actividad
   - [ ] Actividades por profesor
 - [ ] Integración Cloudinary
@@ -268,8 +268,8 @@ Reemplazar servicios mock en `src/services/api.js` con llamadas reales a los end
 TEACHERS  (1) ─────→ (M) ACTIVITIES
               (1:M)
 
-MEMBERS   (M) ←─────→ (M) ACTIVITIES
-              (M:M via ACTIVITY_MEMBER)
+USERS   (M) ←─────→ (M) ACTIVITIES
+              (M:M via ACTIVITY_USERS)
 ```
 
 ---
