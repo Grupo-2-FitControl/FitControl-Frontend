@@ -1,113 +1,55 @@
-let mockTeachers = [
-  {
-    id: 1,
-    name: 'Alberto García',
-    dni: '12345678A',
-    hiring_year: 2020,
-    is_active: true,
-    image_url: 'https://res.cloudinary.com/dltofstl9/image/upload/v1776166675/Alberto_dtofxc.png',
-    activities: [1, 2],
-  },
-  {
-    id: 2,
-    name: 'Melissa Gómez',
-    dni: '23456789B',
-    hiring_year: 2021,
-    is_active: true,
-    image_url: 'https://res.cloudinary.com/dltofstl9/image/upload/v1776166674/Melissa_r6i9cr.png',
-    activities: [3, 4],
-  },
-  {
-    id: 3,
-    name: 'Javier Galván',
-    dni: '34567890C',
-    hiring_year: 2022,
-    is_active: true,
-    image_url: 'https://res.cloudinary.com/dltofstl9/image/upload/v1776166673/Javier_wx64jj.png',
-    activities: [5, 6],
-  },
-  {
-    id: 4,
-    name: 'María Regueiro',
-    dni: '45678901D',
-    hiring_year: 2023,
-    is_active: true,
-    image_url: 'https://res.cloudinary.com/dltofstl9/image/upload/v1776166672/Maria_z1drrf.png',
-    activities: [7, 8],
-  },
-  {
-    id: 5,
-    name: 'Ana Morandeira',
-    dni: '56789012E',
-    hiring_year: 2024,
-    is_active: true,
-    image_url: 'https://res.cloudinary.com/dltofstl9/image/upload/v1776166671/Ana_tsudsq.png',
-    activities: [9, 10],
-  },
-];
-
-
-const delay = (ms = 200) => new Promise(res => setTimeout(res, ms));
-
+import api from './api';
 
 export const teacherService = {
-  // GET ALL
   getAll: async () => {
-    await delay();
-    return { data: mockTeachers };
+    const response = await api.get('/teachers');
+    return response.data || [];
+  },
+
+  getActive: async () => {
+    const response = await api.get('/teachers/active');
+    return response.data;
   },
 
   getById: async (id) => {
-    await delay();
-    const teacher = mockTeachers.find(t => t.id === id);
-    return { data: teacher ?? null };
+    const response = await api.get(`/teachers/${id}`);
+    return response.data;
   },
 
- 
-  create: async (data) => {
-    await delay();
+  getActivities: async (teacherId) => {
+    const response = await api.get(`/teachers/${teacherId}/activities`);
+    return response.data || [];
+  },
 
-    const newTeacher = {
-      id: Date.now(),
+  create: async (data) => {
+    const payload = {
       name: data.name,
       dni: data.dni,
-      hiring_year: data.hiring_year,
-      is_active: data.is_active ?? true,
-      image_url: data.image_url || '',
-      activities: [],
+      hiringYear: data.hiringYear,
+      isActive: data.isActive ?? true,
     };
-
-    mockTeachers = [...mockTeachers, newTeacher];
-
-    return { data: newTeacher };
+    if (data.imageUrl) {
+      payload.imageUrl = data.imageUrl;
+    }
+    console.log('Creating teacher:', payload);
+    const response = await api.post('/teachers', payload);
+    console.log('Teacher created:', response.data);
+    return response.data;
   },
-
 
   update: async (id, data) => {
-    await delay();
-
-    let updated = null;
-
-    mockTeachers = mockTeachers.map(t => {
-      if (t.id === id) {
-        updated = { ...t, ...data };
-        return updated;
-      }
-      return t;
-    });
-
-    return { data: updated };
+    const payload = {
+      name: data.name,
+      dni: data.dni,
+      hiring_year: data.hiringYear || data.hiring_year || data.hiringYear,
+      is_active: data.isActive ?? data.is_active,
+      image_url: data.imageUrl || data.image_url,
+    };
+    const response = await api.put(`/teachers/${id}`, payload);
+    return response.data || response;
   },
 
-
   delete: async (id) => {
-    await delay();
-
-    const exists = mockTeachers.some(t => t.id === id);
-    mockTeachers = mockTeachers.filter(t => t.id !== id);
-
-    return {
-      data: { success: exists }
-    };
+    await api.delete(`/teachers/${id}`);
   },
 };

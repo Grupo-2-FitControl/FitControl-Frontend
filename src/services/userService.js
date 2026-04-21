@@ -1,46 +1,50 @@
-import axios from 'axios';
-
-
-const API_URL = "http://localhost:8080/api/users";
+import api from './api';
 
 export const userService = {
   getAll: async () => {
-    try {
-      const res = await axios.get(API_URL);
-      return res.data;
-    } catch (error) {
-      console.error("Error al obtener usuarios:", error);
-      throw error;
-    }
+    const response = await api.get('/users');
+    return response.data || [];
   },
 
   create: async (userData) => {
+    const payload = {
+      name: userData.name,
+      lastName: userData.lastName,
+      dni: userData.dni,
+      isActive: true,
+      registrationYear: new Date().getFullYear(),
+    };
+    if (userData.email) payload.email = userData.email;
+    if (userData.phone) payload.phone = userData.phone;
     try {
-      const res = await axios.post(API_URL, userData);
-      return res.data;
-    } catch (error) {
-      console.error("Error al crear usuario:", error);
-      throw error;
+      const response = await api.post('/users', payload);
+      return response.data;
+    } catch (err) {
+      console.error('CREATE ERROR:', err.response?.data || err.message);
+      throw err;
     }
   },
 
   update: async (id, userData) => {
+    const payload = {
+      name: userData.name,
+      lastName: userData.lastName,
+      dni: userData.dni,
+      registrationYear: userData.registrationYear || new Date().getFullYear(),
+      isActive: userData.isActive ?? true,
+    };
+    if (userData.email) payload.email = userData.email;
+    if (userData.phone) payload.phone = userData.phone;
     try {
-      const res = await axios.put(`${API_URL}/${id}`, userData);
-      return res.data;
-    } catch (error) {
-      console.error("Error al actualizar usuario:", error);
-      throw error;
+      const response = await api.put(`/users/${id}`, payload);
+      return response.data;
+    } catch (err) {
+      console.error('UPDATE ERROR:', err.response?.data || err.message);
+      throw err;
     }
   },
 
   delete: async (id) => {
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      return true;
-    } catch (error) {
-      console.error("Error al borrar usuario:", error);
-      throw error;
-    }
-  }
+    await api.delete(`/users/${id}`);
+  },
 };

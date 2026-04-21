@@ -1,48 +1,22 @@
-import axios from 'axios';
-
-const API_URL = "http://localhost:8080/api/activities";
+import api from './api';
 
 export const activityService = {
-  
   getAll: async () => {
-    try {
-      const res = await axios.get(API_URL);
-      return res.data;
-    } catch (error) {
-      console.error("Error al obtener actividades:", error);
-      throw error;
-    }
+    const response = await api.get('/activities');
+    return response.data;
   },
 
-
   create: async (activityData) => {
-    try {
-    const res = await axios.post(API_URL, activityData);
-      return res.data;
-    } catch (error) {
-      console.error("Error al crear actividad:", error);
-      throw error;
-    }
+    const response = await api.post('/activities', activityData);
+    return response.data;
   },
 
   update: async (id, activityData) => {
-    try {
-      const res = await axios.put(`${API_URL}/${id}`, activityData);
-      return res.data;
-    } catch (error) {
-      console.error("Error al actualizar actividad:", error);
-      throw error;
-    }
+    const response = await api.put(`/activities/${id}`, activityData);
+    return response.data;
   },
 
-  
   delete: async (id) => {
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      return true;
-    } catch (error) {
-      console.error("Error al borrar actividad:", error);
-      throw error;
-    }
-  }
+    await api.delete(`/activities/${id}`);
+  },
 };

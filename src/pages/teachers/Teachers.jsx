@@ -24,9 +24,9 @@ const Teachers = () => {
     const [formData, setFormData] = useState({
         name: '',
         dni: '',
-        hiring_year: new Date().getFullYear(),
-        is_active: true,
-        image_url: '',
+        hiringYear: new Date().getFullYear(),
+        isActive: true,
+        imageUrl: '',
     });
 
     const showToast = (message, type = 'success') =>
@@ -35,8 +35,21 @@ const Teachers = () => {
     const loadTeachers = async () => {
         setIsLoading(true);
         try {
-            const res = await teacherService.getAll();
-            setTeachers(res.data);
+            const data = await teacherService.getAll();
+            console.log('Teachers loaded:', data.length);
+            const teachersWithActivities = await Promise.all(
+                data.map(async (t) => {
+                    try {
+                        const activities = await teacherService.getActivities(t.id);
+                        console.log(`Activities for ${t.name}:`, activities.length);
+                        return { ...t, activities };
+                    } catch (err) {
+                        console.error(`Error loading activities for ${t.name}:`, err.message);
+                        return { ...t, activities: [] };
+                    }
+                })
+            );
+            setTeachers(teachersWithActivities);
         } catch (e) {
             showToast(e.message || 'Error loading teachers', 'error');
         } finally {
@@ -49,10 +62,15 @@ const Teachers = () => {
     }, []);
 
     const filteredTeachers = teachers
-        .filter(t => t.is_active !== false)
         .filter(t =>
             t.name?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        )
+        .sort((a, b) => {
+            if (a.isActive === b.isActive) {
+                return (a.name || '').localeCompare(b.name || '');
+            }
+            return a.isActive ? -1 : 1;
+        });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -69,18 +87,16 @@ const Teachers = () => {
         }
 
         try {
-            const res = await teacherService.create({
-                ...formData,
-                hiring_year: Number(formData.hiring_year),
-            });
-
-            setTeachers(prev => [...prev, res.data]);
+            const newTeacher = await teacherService.create(formData);
+            if (newTeacher) {
+                setTeachers(prev => [...prev, newTeacher]);
+            }
             showToast('Teacher created successfully');
 
             resetForm();
             setIsCreateModalOpen(false);
         } catch (e) {
-            showToast(e.message || 'Error creating teacher', 'error');
+            showToast(e.response?.data?.message || e.message || 'Error creating teacher', 'error');
         }
     };
 
@@ -97,6 +113,10 @@ const Teachers = () => {
     };
 
     const handleSaved = (updatedTeacher) => {
+        if (!updatedTeacher) {
+            showToast('Error saving teacher', 'error');
+            return;
+        }
         setTeachers(prev =>
             prev.map(t => (t.id === updatedTeacher.id ? updatedTeacher : t))
         );
@@ -112,9 +132,9 @@ const Teachers = () => {
         setFormData({
             name: '',
             dni: '',
-            hiring_year: new Date().getFullYear(),
-            is_active: true,
-            image_url: '',
+            hiringYear: new Date().getFullYear(),
+            isActive: true,
+            imageUrl: '',
         });
 
     return (
@@ -196,7 +216,7 @@ const Teachers = () => {
                                 </button>
                             </div>
 
-                            {/* FORM COMPLETO ORIGINAL */}
+                            {/* FORM */}
                             <form onSubmit={handleSubmit} className="space-y-4">
 
                                 {/* NAME */}
@@ -228,11 +248,11 @@ const Teachers = () => {
 
                                     <input
                                         type="number"
-                                        value={formData.hiring_year}
+                                        value={formData.hiringYear}
                                         onChange={(e) =>
                                             setFormData({
                                                 ...formData,
-                                                hiring_year: e.target.value,
+                                                hiringYear: parseInt(e.target.value),
                                             })
                                         }
                                         className="bg-[#262626] p-2 rounded text-white border border-gray-800 focus:border-[#CCFF00]"
@@ -243,11 +263,11 @@ const Teachers = () => {
                                 <div className="flex items-center gap-3">
                                     <input
                                         type="checkbox"
-                                        checked={formData.is_active}
+                                        checked={formData.isActive}
                                         onChange={(e) =>
                                             setFormData({
                                                 ...formData,
-                                                is_active: e.target.checked,
+                                                isActive: e.target.checked,
                                             })
                                         }
                                         className="accent-[#CCFF00]"
@@ -259,11 +279,11 @@ const Teachers = () => {
 
                                 {/* IMAGE */}
                                 <input
-                                    value={formData.image_url}
+                                    value={formData.imageUrl}
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
-                                            image_url: e.target.value,
+                                            imageUrl: e.target.value,
                                         })
                                     }
                                     placeholder="Imagen URL"
