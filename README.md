@@ -84,7 +84,7 @@ src/
 │   │   ├── ActivityCard.jsx
 │   │   ├── CreateActivityModal.jsx
 │   │   ├── EditActivityModal.jsx
-│   │   └── ViewMembersModal.jsx
+│   │   └── ViewUsersModal.jsx
 │
 ├── services/
 │   └── api.js
@@ -206,18 +206,18 @@ GET    /api/activities/future
 POST   /api/activities
 ```
 
-### Members
+### Users
 
 ```
-GET    /api/members
-POST   /api/members
+GET    /api/users
+POST   /api/users
 ```
 
 ### Enrollments
 
 ```
-POST   /api/enrollments/{activityId}/{memberId}
-DELETE /api/enrollments/{activityId}/{memberId}
+POST   /api/enrollments/{activityId}/{usersId}
+DELETE /api/enrollments/{activityId}/{usersId}
 ```
 
 ---
@@ -272,14 +272,14 @@ npm run dev
 
 ```
 TEACHERS (1) ─────→ (M) ACTIVITIES
-MEMBERS  (M) ←──→ (M) ACTIVITIES
+USERS  (M) ←──→ (M) ACTIVITIES
 ```
 
 ---
 
 ## 🗺️ Roadmap
 
-- CRUD Members
+- CRUD Users
 - Autenticación
 - Backend real integration
 - Paginación
