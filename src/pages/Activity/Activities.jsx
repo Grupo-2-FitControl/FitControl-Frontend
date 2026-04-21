@@ -76,6 +76,7 @@ function Activities() {
   const [profesores, setProfesores] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activities, setActivities] = useState([]);
+  const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const cargarActividades = async () => {
@@ -136,6 +137,7 @@ function Activities() {
   const handleEditActivity = (id) => {
     const activity = activities.find(a => a.id === id);
     if (activity) {
+      setEditingId(id);
       setNuevaActividad({
         titulo: activity.title || activity.name || '',
         descripcion: activity.description || '',
@@ -166,9 +168,15 @@ function Activities() {
         isActive: true,
       };
 
-      await activityService.create(payload);
-      alert("¡Actividad guardada!");
+      if (editingId) {
+        await activityService.update(editingId, payload);
+        alert("¡Actividad actualizada!");
+      } else {
+        await activityService.create(payload);
+        alert("¡Actividad guardada!");
+      }
       setShowModal(false);
+      setEditingId(null);
       setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" });
       cargarActividades();
     } catch (error) {
@@ -225,7 +233,7 @@ function Activities() {
             <div className="bg-[#1A1A1A] p-8 rounded-xl w-full max-w-xl border-2 border-transparent transition-all duration-300 hover:border-[#CCFF00]">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-[#CCFF00] text-2xl font-bold uppercase tracking-wider">{nuevaActividad.titulo ? 'Editar Actividad' : 'Nueva Actividad'}</h2>
-                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white"><XMarkIcon className="w-6 h-6" /></button>
+                <button onClick={() => { setShowModal(false); setEditingId(null); setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" }); }} className="text-gray-400 hover:text-white"><XMarkIcon className="w-6 h-6" /></button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -319,7 +327,7 @@ function Activities() {
                   </select>
                 </div>
                 <div className="flex justify-end gap-6 mt-6">
-                  <button type="button" onClick={() => setShowModal(false)} className="text-gray-500 hover:text-red-500 text-3xl">&times;</button>
+                  <button type="button" onClick={() => { setShowModal(false); setEditingId(null); setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" }); }} className="text-gray-500 hover:text-red-500 text-3xl">&times;</button>
                   <button type="submit" className="text-gray-500 hover:text-[#CCFF00]"><CheckIcon className="w-8 h-8" /></button>
                 </div>
               </form>

@@ -70,9 +70,9 @@ const handleSubmit = async (e) => {
     if (window.confirm("¿Estás seguro de eliminar este socio?")) {
       try {
         await userService.delete(id);
-        setUsuarios(usuarios.filter(u => u.id !== id));
+        setUsuarios(prev => prev.filter(u => u.id !== id));
       } catch (error) {
-        alert("Error al eliminar el usuario");
+        alert("Error al eliminar el usuario: " + (error.response?.data?.message || error.message));
       }
     }
   };

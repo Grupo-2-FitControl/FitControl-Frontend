@@ -41,12 +41,14 @@ export const teacherService = {
     const payload = {
       name: data.name,
       dni: data.dni,
-      hiring_year: data.hiringYear || data.hiring_year || data.hiringYear,
-      is_active: data.isActive ?? data.is_active,
-      image_url: data.imageUrl || data.image_url,
+      hiringYear: data.hiringYear || data.hiring_year,
+      isActive: data.isActive ?? data.is_active,
     };
+    if (data.imageUrl || data.image_url) {
+      payload.imageUrl = data.imageUrl || data.image_url;
+    }
     const response = await api.put(`/teachers/${id}`, payload);
-    return response.data || response;
+    return response.data;
   },
 
   delete: async (id) => {
