@@ -1,4 +1,4 @@
-import { CalendarDaysIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
   const {
@@ -51,43 +51,54 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
         </p>
       </div>
 
+      {/* ===== ICONOS ===== */}
+
+      {/* EDIT (VERDE) */}
       <div className="absolute bottom-4 left-4 group">
         <button
-          onClick={() => onSchedule(teacher)}
-          className="bg-[#D4FF00] text-black p-3 hover:scale-110 transition"
-          title="Ver horario"
+          onClick={() => onEdit(teacher)}
+          className="text-[#D4FF00] hover:text-white transition-all duration-200 hover:scale-110"
         >
-          <CalendarDaysIcon className="w-5 h-5" />
-          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
-            Ver horario
-          </span>
+          <PencilSquareIcon className="w-6 h-6" />
         </button>
+
+        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+          bg-black text-white text-xs px-2 py-1 rounded 
+          opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+          Editar profesor
+        </span>
       </div>
 
+      {/* DELETE (ROJO PALETA) */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 group">
         <button
-          onClick={() => onEdit(teacher)}
-          className="bg-[#FF5722] text-white p-3 hover:scale-110 transition"
-          title="Editar profesor"
+          onClick={() => onDelete(teacher.id)}
+          className="text-[#FF5722] hover:text-white transition-all duration-200 hover:scale-110"
         >
-          <PencilSquareIcon className="w-5 h-5" />
-          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
-            Editar profesor
-          </span>
+          <XMarkIcon className="w-6 h-6" />
         </button>
+
+        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+          bg-black text-white text-xs px-2 py-1 rounded 
+          opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+          Eliminar profesor
+        </span>
       </div>
 
+      {/* CHECK (NARANJA ACCIÓN) */}
       <div className="absolute bottom-4 right-4 group">
         <button
-          onClick={() => onDelete(teacher.id)}
-          className="bg-zinc-800 hover:bg-red-600 text-red-400 hover:text-white p-3 transition"
-          title="Eliminar profesor"
+          onClick={() => onSchedule(teacher)}
+          className="text-[#FF5722] hover:text-[#D4FF00] transition-all duration-200 hover:scale-110"
         >
-          <TrashIcon className="w-5 h-5" />
-          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
-            Eliminar profesor
-          </span>
+          <CheckIcon className="w-6 h-6" />
         </button>
+
+        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+          bg-black text-white text-xs px-2 py-1 rounded 
+          opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+          Confirmar acción
+        </span>
       </div>
 
     </div>
