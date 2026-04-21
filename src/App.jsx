@@ -1,14 +1,11 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Layout from "./components/layout/Layout.jsx";
-import Homepage from "./pages/homepage/Homepage.jsx"
-import Activities from "./pages/Activity/Activities.jsx";
-import ActivityDetail from "./pages/Activity/ActivityDetail.jsx";
-import Teachers from "./pages/teachers/Teachers.jsx"
-import Users from "./pages/Users/Users.jsx";
-
-
-function App() {
+import { Routes, Route } from 'react-router-dom';
+import Layout from "./components/layout/Layout";
+import Homepage from "./pages/homepage/Homepage";
+import Activities from "./pages/Activity/Activities";
+import Teachers from "./pages/teachers/Teachers";
+import Users from "./pages/Users/Users";
+export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -20,4 +17,3 @@ function App() {
     </Routes>
   );
 }
-export default App;

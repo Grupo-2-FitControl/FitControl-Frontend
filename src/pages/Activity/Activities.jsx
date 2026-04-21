@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CheckIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { activityService } from "../../services/Activity/activityService";
+import { activityService } from "../../services/activityService";
 import ActivityCard from "../../components/Activity/ActivityCard";
 import imgCross from "../../assets/CrossTraining.jpg";
 const misActividades = [
