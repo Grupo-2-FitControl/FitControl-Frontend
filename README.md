@@ -35,68 +35,67 @@ Arquitectura basada en componentes reutilizables:
 ### 📦 Capas del sistema
 
 - **Pages**
-  - Home (Dashboard)
+  - Homepage ( Landing )
   - Teachers
   - Activities
+  - Users
 
 - **Components**
-  - Cards
-  - Modals
-  - Charts
-  - Alerts
-  - Tables
+  - Layout (Navbar, Footer, Layout)
+  - Homepage (Banner, FeatureCard, SummaryPhilosophy)
+  - Teachers (Cards, Modals, Toast)
+  - Activities (Cards, Modals)
+  - Users
 
 - **Services**
-  - dashboardService
-  - activityService
+  - api.js
   - teacherService
-  - enrollmentService
+  - activityService
+  - userService
 
 ---
 
 ## 🗄️ Estructura de Datos (Backend)
 
 ### Teachers (Profesores)
-```sql
-- id (PK)
-- nombre
-- dni (UNIQUE)
-- email (UNIQUE)
-- contratado (boolean)
-- imagen (URL)
+```js
+{
+  id,
+  name: String,
+  dni: String,
+  hiringYear: Number,
+  isActive: Boolean,
+  imageUrl: String (optional)
+}
 ```
 
 ### Users (Usuarios)
-```sql
-- id (PK)
-- nombre
-- apellidos
-- dni (UNIQUE)
-- telefono
-- activo (boolean)
-- imagen (URL)
+```js
+{
+  id,
+  name: String,
+  lastName: String,
+  dni: String,
+  email: String (optional),
+  phone: String (optional),
+  registrationYear: Number,
+  isActive: Boolean
+}
 ```
 
 ### Activities (Actividades)
-```sql
-- id (PK)
-- titulo
-- descripcion
-- precio (decimal)
-- fecha_inicio (datetime)
-- imagen (URL)
-- teacher_id (FK)
-```
-
-### Activity_Users (Inscripciones - M2M)
-```
-- activity_id (FK)
-- users_id (FK)
+```js
+{
+  id,
+  // campos según backend
+}
 ```
 
 ---
 
 ## 🔌 Endpoints Disponibles (Backend)
+
+Base URL: `http://localhost:8080/api`
 
 ### TEACHERS - `/api/teachers`
 ```
@@ -113,32 +112,17 @@ DELETE /api/teachers/{id}         - Eliminar
 ### ACTIVITIES - `/api/activities`
 ```
 GET    /api/activities            - Listar todas
-GET    /api/activities/active
-GET    /api/activities/future
-GET    /api/activities/{id}
-GET    /api/activities/teacher/{teacherId}
-
-POST   /api/activities            - Crear con teacherId
-PUT    /api/activities/{id}
-DELETE /api/activities/{id}
+POST   /api/activities            - Crear
+PUT    /api/activities/{id}        - Actualizar
+DELETE /api/activities/{id}       - Eliminar
 ```
 
 ### USERS - `/api/users`
 ```
-GET    /api/users
-GET    /api/users/active
-GET    /api/users/{id}
-GET    /api/users/{id}/activities
-
-POST   /api/users
-PUT    /api/users/{id}
-DELETE /api/users/{id}
-```
-
-### ENROLLMENTS - `/api/enrollments`
-```
-POST   /api/enrollments/{activityId}/{usersId}
-DELETE /api/enrollments/{activityId}/{usersId}
+GET    /api/users                - Listar todos
+POST   /api/users                - Crear
+PUT    /api/users/{id}            - Actualizar
+DELETE /api/users/{id}           - Eliminar
 ```
 
 ---
@@ -148,20 +132,29 @@ DELETE /api/enrollments/{activityId}/{usersId}
 ```
 src/
 ├── pages/
-│   ├── home/
-│   │   └── Home.jsx
+│   ├── homepage/
+│   │   └── Homepage.jsx
 │   ├── teachers/
 │   │   └── Teachers.jsx
-│   ├── activities/
-│   │   └── Activities.jsx
+│   ├── Activity/
+│   │   ├── Activities.jsx
+│   │   └── ActivityDetail.jsx
+│   └── Users/
+│       └─�� Users.jsx
 │
 ├── components/
-│   ├── home/
-│   │   ├── StatCard.jsx
-│   │   ├── DashboardChart.jsx
-│   │   ├── RecentActivity.jsx
-│   │   ├── AlertsPanel.jsx
-│   │   └── WelcomeHeader.jsx
+│   ├── layout/
+│   │   ├── Layout.jsx
+│   │   ├── Navbar.jsx
+│   │   └── Footer.jsx
+│   │
+│   ├── homepage/
+│   │   ├── Banner.jsx
+│   │   ├── featurecard/
+│   │   │   ├── Features.jsx
+│   │   │   └── FeatureCard.jsx
+│   │   └── summaryInfo/
+│   │       └── SummaryPhilosophy.jsx
 │   │
 │   ├── teachers/
 │   │   ├── TeachersCard.jsx
@@ -169,45 +162,36 @@ src/
 │   │   ├── ScheduleModal.jsx
 │   │   └── Toast.jsx
 │   │
-│   ├── activities/
+│   ├── Activity/
 │   │   ├── ActivityCard.jsx
 │   │   ├── CreateActivityModal.jsx
 │   │   ├── EditActivityModal.jsx
 │   │   └── ViewUsersModal.jsx
 │
 ├── services/
-│   └── api.js
+│   ├── api.js
+│   ├── teacherService.js
+│   ├── activityService.js
+│   └── userService.js
 │
-├── context/
-├── hooks/
 ├── assets/
 │
 ├── App.jsx
+├── App.css
 ├── main.jsx
 └── index.css
 ```
 
 ---
 
-## 🏠 Módulo Home (Dashboard)
+## 🏠 Módulo Homepage (Landing)
 
 ### 📊 Funcionalidades
 
-- KPIs del gimnasio en tiempo real
-- Gráficas de actividad e ingresos
-- Alertas del sistema
-- Accesos rápidos a módulos
-- Últimas actividades y miembros
-- Profesores destacados
-
-### 📈 KPIs principales
-
-- Profesores activos
-- Miembros activos
-- Actividades futuras
-- Ingresos mensuales
-- Capacidad utilizada
-- Nuevas inscripciones
+- Landing page con Banner principal
+- Sección de características del sistema
+- Filosofía y resumen del servicio
+- Navegación a los diferentes módulos
 
 ---
 
@@ -225,19 +209,18 @@ src/
 
 ```js
 {
-  nombre: String,
+  name: String,
   dni: String,
-  email: String,
-  contratado: Boolean,
-  imagen: String
+  hiringYear: Number,
+  isActive: Boolean,
+  imageUrl: String (optional)
 }
 ```
 
 ### 🔐 Validaciones
 
 - DNI → `/^\d{8}[A-Z]$/`
-- Email → formato válido
-- Campos obligatorios
+- Campos obligatorios (name, dni)
 - Feedback visual (toasts)
 
 ---
@@ -252,18 +235,39 @@ src/
 - Gestión de capacidad
 - Inscripción de miembros
 - Visualización de asistentes
+- Detalle de actividad
 
 ### 📋 Campos principales
 
 ```js
 {
-  titulo,
-  descripcion,
-  precio,
-  fecha,
-  profesor_id,
-  capacidad,
-  imagen
+  // según backend
+}
+```
+
+---
+
+## 👥 Módulo Users
+
+### ✨ Funcionalidades
+
+- Listado de miembros activos
+- CRUD de usuarios
+- Gestión de inscripciones
+- Búsqueda y filtros
+- Estado activo/inactivo
+
+### 📋 Campos principales
+
+```js
+{
+  name: String,
+  lastName: String,
+  dni: String,
+  email: String (optional),
+  phone: String (optional),
+  registrationYear: Number,
+  isActive: Boolean
 }
 ```
 
@@ -274,7 +278,7 @@ src/
 ### Base URL
 
 ```
-http://localhost:8080
+http://localhost:8080/api
 ```
 
 ### Teachers
@@ -291,8 +295,9 @@ DELETE /api/teachers/{id}
 
 ```
 GET    /api/activities
-GET    /api/activities/future
 POST   /api/activities
+PUT    /api/activities/{id}
+DELETE /api/activities/{id}
 ```
 
 ### Users
@@ -300,13 +305,8 @@ POST   /api/activities
 ```
 GET    /api/users
 POST   /api/users
-```
-
-### Enrollments
-
-```
-POST   /api/enrollments/{activityId}/{usersId}
-DELETE /api/enrollments/{activityId}/{usersId}
+PUT    /api/users/{id}
+DELETE /api/users/{id}
 ```
 
 ---
@@ -315,11 +315,8 @@ DELETE /api/enrollments/{activityId}/{usersId}
 
 | Regla | Código |
 |------|--------|
-| Usuario inactivo | 403 |
-| Inscripción duplicada | 409 |
-| Máx. 3 actividades | 409 |
-| Profesor inactivo | 409 |
-| DNI/email duplicado | 409 |
+| DNI duplicado | 409 |
+| Error de servidor | 500 |
 
 ---
 
@@ -368,12 +365,14 @@ USERS  (M) ←──→ (M) ACTIVITIES
 
 ## 🗺️ Roadmap
 
-- CRUD Users
-- Autenticación
-- Backend real integration
-- Paginación
-- Filtros avanzados
-- Testing
+- [x] CRUD Users
+- [x] Landing page
+- [x] Detalle de actividades
+- [ ] Autenticación
+- [ ] Backend real integration
+- [ ] Paginación
+- [ ] Filtros avanzados
+- [ ] Testing
 
 ---
 
