@@ -19,4 +19,19 @@ export const activityService = {
   delete: async (id) => {
     await api.delete(`/activities/${id}`);
   },
+
+  getEnrolledUsers: async (activityId) => {
+    const response = await api.get(`/activities/${activityId}/users`);
+    return response.data || [];
+  },
+
+  enrollUser: async (activityId, userId) => {
+    const response = await api.post(`/activities/${activityId}/users/${userId}`);
+    return response.data;
+  },
+
+  unenrollUser: async (activityId, userId) => {
+    const response = await api.delete(`/activities/${activityId}/users/${userId}`);
+    return response.data;
+  },
 };

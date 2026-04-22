@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {CheckIcon, XMarkIcon, PlusIcon} from "@heroicons/react/24/outline";
 import {activityService} from "../../services/activityService";
 import {teacherService} from "../../services/teacherService";
+import {userService} from "../../services/userService";
 import ActivityCard from "../../components/Activity/ActivityCard";
 import imgCross from "../../assets/CrossTraining.jpg";
 
@@ -76,31 +77,78 @@ function Activities() {
   const [profesores, setProfesores] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activities, setActivities] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const cargarActividades = async () => {
     try {
-      const [data, teachers] = await Promise.all([activityService.getAll(), teacherService.getAll()]);
+      const [data, teachers, users] = await Promise.all([
+        activityService.getAll(), 
+        teacherService.getAll(),
+        userService.getAll()
+      ]);
 
       const teachersMap = {};
       teachers.forEach((t) => {
         teachersMap[t.id] = t;
       });
 
-      const actividadesFormateadas = data.map((act) => {
-        const teacher = teachersMap[act.teacherId] || {};
-        return {
-          ...act,
-          name: act.title || act.name,
-          image: act.imageUrl,
-          coach: act.teacherName || teacher.name || "Sin asignar",
-          contact: "",
-          coachImage: teacher.imageUrl || "",
-        };
-      });
+      let alertMessage = "";
+
+      const actividadesFormateadas = await Promise.all(
+        data.map(async (act) => {
+          const teacher = teachersMap[act.teacherId] || {};
+          let enrolledUsers = [];
+          try {
+            enrolledUsers = await activityService.getEnrolledUsers(act.id) || [];
+          } catch {
+            console.warn("No se pudieron cargar usuarios inscritos para actividad", act.id);
+          }
+          
+          if (act.teacherId && teacher.isActive === false) {
+            alertMessage += `• "${act.title || act.name}" tenía asignado al profesor inactivo "${teacher.name}". Se ha desasignado.\n`;
+            try {
+              await activityService.update(act.id, { teacherId: null });
+            } catch {}
+            return {
+              ...act,
+              teacherId: null,
+              name: act.title || act.name,
+              image: act.imageUrl,
+              coach: "Sin asignar",
+              contact: "",
+              coachImage: "",
+              capacity: act.capacity || 20,
+              enrolledCount: enrolledUsers.length,
+              enrolledUsers: enrolledUsers,
+              schedule: act.schedule || "",
+              price: act.price || 0,
+            };
+          }
+          
+          return {
+            ...act,
+            name: act.title || act.name,
+            image: act.imageUrl,
+            coach: act.teacherName || teacher.name || "Sin asignar",
+            contact: "",
+            coachImage: teacher.imageUrl || "",
+            capacity: act.capacity || 20,
+            enrolledCount: enrolledUsers.length,
+            enrolledUsers: enrolledUsers,
+            schedule: act.schedule || "",
+            price: act.price || 0,
+          };
+        })
+      );
       setActivities(actividadesFormateadas);
       setProfesores(teachers);
+      setAllUsers(users);
+      
+      if (alertMessage) {
+        alert("ACTIVIDADES SIN PROFESOR:\n\n" + alertMessage + "\nAsigna un nuevo profesor activo a estas actividades.");
+      }
     } catch (error) {
       console.error("Error al traer actividades:", error.message);
     }
@@ -144,12 +192,38 @@ function Activities() {
         horario: activity.schedule || "",
         capacidad: activity.capacity?.toString() || "",
       });
+      const teacher = profesores.find(p => p.id === activity.teacherId);
+      if (teacher && teacher.isActive === false) {
+        alert(`AVISO: El profesor "${teacher.name}" está inactivo. La actividad se quedará sin profesor asignado.`);
+      }
       setShowModal(true);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const selectedTeacher = profesores.find(p => p.id === parseInt(nuevaActividad.profesorId));
+    if (!selectedTeacher) {
+      alert("Debes seleccionar un profesor");
+      return;
+    }
+    if (selectedTeacher.isActive === false) {
+      alert("No se puede asignar una actividad a un profesor inactivo");
+      return;
+    }
+    if (editingId) {
+      const originalActivity = activities.find(a => a.id === editingId);
+      if (originalActivity?.teacherId !== parseInt(nuevaActividad.profesorId)) {
+        const originalTeacher = profesores.find(p => p.id === originalActivity?.teacherId);
+        if (originalTeacher && originalTeacher.isActive === false) {
+          if (!window.confirm(`El profesor "${originalTeacher.name}" está inactivo. ¿Deseas dejar la actividad sin profesor?`)) {
+            return;
+          }
+        }
+      }
+    }
+    
     try {
       const payload = {
         title: nuevaActividad.titulo,
@@ -249,8 +323,10 @@ function Activities() {
                 id={act.id}
                 name={act.title || act.name}
                 {...act}
+                allUsers={allUsers}
                 onEdit={handleEditActivity}
                 onDelete={handleDeleteActivity}
+                onEnrollSuccess={cargarActividades}
               />
             ))
           ) : (
@@ -380,6 +456,9 @@ function Activities() {
                         </option>
                       ))}
                   </select>
+                  {nuevaActividad.profesorId && !profesores.find(p => p.id === parseInt(nuevaActividad.profesorId) && p.isActive !== false) && (
+                    <p className="text-red-500 text-xs mt-1">Este profesor está inactivo. Selecciona uno activo.</p>
+                  )}
                 </div>
                 <div className="flex justify-end gap-6 mt-6">
                   <button

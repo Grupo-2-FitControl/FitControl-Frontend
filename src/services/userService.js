@@ -47,4 +47,9 @@ export const userService = {
   delete: async (id) => {
     await api.delete(`/users/${id}`);
   },
+
+  getEnrolledActivities: async (userId) => {
+    const response = await api.get(`/users/${userId}/activities`);
+    return response.data || [];
+  },
 };

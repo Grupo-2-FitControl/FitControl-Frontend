@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { XMarkIcon, UserPlusIcon, CheckIcon, UserIcon } from "@heroicons/react/24/outline";
+import { userService } from "../../services/userService";
+import { activityService } from "../../services/activityService";
 
 const DATOS_BENEFICIOS = {
   1: [
@@ -205,14 +208,6 @@ const ActivityDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const nombresActividades = {
-    "1": "AQUAFIT",
-    "2": "BIKE",
-    "3": "CIRCUIT",
-    "4": "CROSS TRAINNING",
-    "5": "PILATES",
-    "6": "ZUMBA"
-  };
   const gestionInfo = {
     1: { profe: "Maria Regueiro", cupo: "20/25", hora: "08:00 - 10:00" },
     2: { profe: "Melissa Gomez", cupo: "15/20", hora: "09:00 - 11:00" },
@@ -224,6 +219,54 @@ const ActivityDetail = () => {
 
   const infoActual = gestionInfo[id] || gestionInfo["1"];
   const beneficios = DATOS_BENEFICIOS[id] || [];
+
+  const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [usuarios, setUsuarios] = useState([]);
+  const [usuariosInscritos, setUsuariosInscritos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const [usersData, enrolledData] = await Promise.all([
+          userService.getAll(),
+          activityService.getEnrolledUsers(id)
+        ]);
+        setUsuarios(usersData || []);
+        setUsuariosInscritos(enrolledData || []);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+    cargarDatos();
+  }, [id]);
+
+  const handleEnrollUser = async (userId) => {
+    try {
+      await activityService.enrollUser(id, userId);
+      const updatedEnrolled = await activityService.getEnrolledUsers(id);
+      setUsuariosInscritos(updatedEnrolled || []);
+      alert("Usuario inscrito correctamente");
+    } catch (error) {
+      alert("Error al inscribir: " + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const handleUnenrollUser = async (userId) => {
+    if (!window.confirm("¿Desinscribir al usuario?")) return;
+    try {
+      await activityService.unenrollUser(id, userId);
+      const updatedEnrolled = await activityService.getEnrolledUsers(id);
+      setUsuariosInscritos(updatedEnrolled || []);
+      alert("Usuario desinscrito correctamente");
+    } catch (error) {
+      alert("Error al desinscribir: " + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const usuariosNoInscritos = usuarios.filter(
+    (u) => !usuariosInscritos.some((ui) => ui.id === u.id)
+  );
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white p-8">
@@ -280,7 +323,7 @@ const ActivityDetail = () => {
                 Disponibilidad
               </p>
               <p className="font-bold">
-                {infoActual.cupo}{" "}
+                {usuariosInscritos.length}/{infoActual.cupo.split("/")[1] || 20}
                 <span className="text-[10px] text-gray-400">Cupos</span>
               </p>
             </div>
@@ -291,16 +334,98 @@ const ActivityDetail = () => {
               </p>
               <p className="font-bold">{infoActual.hora}</p>
             </div>
+
+            {usuariosInscritos.length > 0 && (
+              <div className="bg-[#1a1a1a] p-3 rounded-lg border border-gray-800">
+                <p className="text-[10px] text-gray-500 uppercase font-bold mb-2">
+                  Usuarios Inscritos
+                </p>
+                <div className="max-h-32 overflow-y-auto space-y-1">
+                  {usuariosInscritos.map((user) => (
+                    <div key={user.id} className="flex items-center justify-between text-xs">
+                      <span className="text-white truncate">
+                        {user.name} {user.lastName}
+                      </span>
+                      <button
+                        onClick={() => handleUnenrollUser(user.id)}
+                        className="text-red-500 hover:text-red-400 ml-2"
+                      >
+                        <XMarkIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
         <button 
-      onClick={() => navigate('/users', { state: { openModal: true, nombreClase: nombresActividades[id] } })}
-      className="w-full mt-6 py-2.5 border-2 border-[#CCFF00] text-[#CCFF00] font-bold uppercase text-[11px] rounded-lg"
-    >
-      Asignar Cupo
-    </button>
+          onClick={() => setShowEnrollModal(true)}
+          className="w-full mt-6 py-2.5 border-2 border-[#CCFF00] text-[#CCFF00] font-bold uppercase text-[11px] rounded-lg flex items-center justify-center gap-2"
+        >
+          <UserPlusIcon className="w-4 h-4" />
+          Inscribir Usuario
+        </button>
         </div>
       </div>
+
+      {showEnrollModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-[#111] border border-gray-800 w-full max-w-md rounded-2xl p-6 relative">
+            <button
+              onClick={() => setShowEnrollModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-white"
+            >
+              <XMarkIcon className="w-6 h-6" />
+            </button>
+            <h2 className="text-[#CCFF00] font-black uppercase italic mb-4">
+              Inscribir Usuario
+            </h2>
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="BUSCAR USUARIO..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-black border border-gray-800 rounded-lg p-2 text-white text-sm outline-none focus:border-[#CCFF00]"
+              />
+            </div>
+            <div className="max-h-64 overflow-y-auto space-y-2">
+              {usuariosNoInscritos
+                .filter(
+                  (u) =>
+                    !searchTerm ||
+                    `${u.name} ${u.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    u.dni?.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center justify-between bg-[#1a1a1a] p-3 rounded-lg border border-gray-800"
+                  >
+                    <div>
+                      <p className="text-white text-sm font-bold">
+                        {user.name} {user.lastName}
+                      </p>
+                      <p className="text-gray-500 text-xs">{user.dni}</p>
+                    </div>
+                    <button
+                      onClick={() => handleEnrollUser(user.id)}
+                      className="bg-[#CCFF00] text-black p-2 rounded-lg hover:bg-[#b8e600]"
+                    >
+                      <CheckIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              {usuariosNoInscritos.length === 0 && (
+                <p className="text-gray-500 text-center py-4">
+                  No hay usuarios disponibles para inscrire
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

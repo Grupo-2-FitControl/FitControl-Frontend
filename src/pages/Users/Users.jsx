@@ -6,11 +6,11 @@ import {
   UserPlusIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
-  UserIcon,
-  PlusIcon,
+  CalendarIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
 import {userService} from "../../services/userService";
+import {activityService} from "../../services/activityService";
 
 const Users = () => {
   const location = useLocation();
@@ -18,21 +18,57 @@ const Users = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [usuarios, setUsuarios] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [enrolledUsersByActivity, setEnrolledUsersByActivity] = useState({});
+  const [userActivities, setUserActivities] = useState({});
 
-  const [editandoId, setEditandoId] = useState(null);
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: "",
     apellidos: "",
     dni: "",
     registrationYear: new Date().getFullYear(),
     isActive: true,
+    actividadIds: [],
   });
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const data = await userService.getAll();
-        setUsuarios(data);
+        const [usersData, activitiesData] = await Promise.all([
+          userService.getAll(),
+          activityService.getAll()
+        ]);
+        
+        const activitiesSorted = [...activitiesData].sort((a, b) => 
+          (a.title || a.name || "").localeCompare(b.title || b.name || "")
+        );
+        
+        setUsuarios(usersData);
+        setActivities(activitiesSorted);
+        
+        const enrolledMap = {};
+        for (const act of activitiesData) {
+          try {
+            const users = await activityService.getEnrolledUsers(act.id);
+            enrolledMap[act.id] = users || [];
+          } catch {
+            enrolledMap[act.id] = [];
+          }
+        }
+        setEnrolledUsersByActivity(enrolledMap);
+
+        const userActs = {};
+        for (const user of usersData) {
+          try {
+            const acts = await userService.getEnrolledActivities(user.id);
+            userActs[user.id] = acts || [];
+          } catch {
+            userActs[user.id] = [];
+          }
+        }
+        setUserActivities(userActs);
       } catch (error) {
         console.error("Error conectando al backend:", error);
       }
@@ -58,9 +94,33 @@ const Users = () => {
       const res = await userService.create(payload);
       if (res) {
         setUsuarios([...usuarios, res]);
+        
+        if (nuevoUsuario.actividadIds && nuevoUsuario.actividadIds.length > 0) {
+          for (const actId of nuevoUsuario.actividadIds) {
+            try {
+              await activityService.enrollUser(actId, res.id);
+            } catch {
+              console.warn("No se pudo inscribir en actividad", actId);
+            }
+          }
+          const acts = await userService.getEnrolledActivities(res.id);
+          setUserActivities(prev => ({...prev, [res.id]: acts || []}));
+          for (const actId of nuevoUsuario.actividadIds) {
+            const users = await activityService.getEnrolledUsers(actId);
+            setEnrolledUsersByActivity(prev => ({...prev, [actId]: users || []}));
+          }
+          alert(`Usuario registrado e inscrito en ${nuevoUsuario.actividadIds.length} actividad(es)`);
+        }
       }
       setShowModal(false);
-      setNuevoUsuario({nombre: "", apellidos: "", dni: "", registrationYear: new Date().getFullYear(), isActive: true});
+      setNuevoUsuario({
+        nombre: "",
+        apellidos: "",
+        dni: "",
+        registrationYear: new Date().getFullYear(),
+        isActive: true,
+        actividadIds: [],
+      });
     } catch (error) {
       const msg = error.response?.data?.message || error.message;
       const validationErrors = error.response?.data?.validationErrors;
@@ -77,12 +137,6 @@ const Users = () => {
     }
   };
 
-  const cerrarModal = () => {
-    setShowModal(false);
-    setEditandoId(null);
-    setNuevoUsuario({nombre: "", apellidos: "", dni: "", telefono: "", email: ""});
-  };
-
   const handleDelete = async (id) => {
     if (window.confirm("¿Estás seguro de eliminar este socio?")) {
       try {
@@ -94,8 +148,16 @@ const Users = () => {
     }
   };
 
-  const handleEdit = (user) => {
+  const handleEdit = async (user) => {
     setEditingUser(user);
+    let userActIds = [];
+    try {
+      const acts = await userService.getEnrolledActivities(user.id);
+      userActIds = (acts || []).map(a => a.id);
+      setUserActivities(prev => ({...prev, [user.id]: acts || []}));
+    } catch {
+      console.warn("No se pudieron cargar actividades del usuario");
+    }
     setNuevoUsuario({
       nombre: user.name || "",
       apellidos: user.lastName || "",
@@ -103,6 +165,7 @@ const Users = () => {
       registrationYear: user.registrationYear || new Date().getFullYear(),
       imageUrl: user.imageUrl || "",
       isActive: user.isActive ?? true,
+      actividadIds: userActIds,
     });
     setShowModal(true);
   };
@@ -121,10 +184,30 @@ const Users = () => {
       const res = await userService.update(editingUser.id, payload);
       if (res) {
         setUsuarios(usuarios.map((u) => (u.id === editingUser.id ? {...u, ...res} : u)));
+        
+        const oldActs = userActivities[editingUser.id] || [];
+        const oldActIds = oldActs.map(a => a.id);
+        const newActIds = nuevoUsuario.actividadIds || [];
+        
+        const toAdd = newActIds.filter(id => !oldActIds.includes(id));
+        const toRemove = oldActIds.filter(id => !newActIds.includes(id));
+        
+        for (const actId of toAdd) {
+          try { await activityService.enrollUser(actId, editingUser.id); } catch {}
+        }
+        for (const actId of toRemove) {
+          try { await activityService.unenrollUser(actId, editingUser.id); } catch {}
+        }
+        const acts = await userService.getEnrolledActivities(editingUser.id);
+        setUserActivities(prev => ({...prev, [editingUser.id]: acts || []}));
+        for (const actId of [...toAdd, ...toRemove]) {
+          const users = await activityService.getEnrolledUsers(actId);
+          setEnrolledUsersByActivity(prev => ({...prev, [actId]: users || []}));
+        }
       }
       setShowModal(false);
       setEditingUser(null);
-      setNuevoUsuario({nombre: "", apellidos: "", dni: "", registrationYear: new Date().getFullYear(), isActive: true});
+      setNuevoUsuario({nombre: "", apellidos: "", dni: "", registrationYear: new Date().getFullYear(), isActive: true, actividadIds: []});
     } catch (error) {
       const validationErrors = error.response?.data?.validationErrors;
       if (validationErrors) {
@@ -136,6 +219,51 @@ const Users = () => {
         alert("Error al actualizar: " + (error.response?.data?.message || error.message));
       }
     }
+  };
+
+  const handleEnrollUser = async (userId, activityId) => {
+    try {
+      await activityService.enrollUser(activityId, userId);
+      const users = await activityService.getEnrolledUsers(activityId);
+      setEnrolledUsersByActivity(prev => ({...prev, [activityId]: users || []}));
+      const acts = await userService.getEnrolledActivities(userId);
+      setUserActivities(prev => ({...prev, [userId]: acts || []}));
+      alert("Usuario inscrito correctamente");
+    } catch (error) {
+      alert("Error al inscribir: " + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const handleUnenrollUser = async (userId, activityId) => {
+    if (!window.confirm("¿Desinscribir al usuario de esta actividad?")) return;
+    try {
+      await activityService.unenrollUser(activityId, userId);
+      const users = await activityService.getEnrolledUsers(activityId);
+      setEnrolledUsersByActivity(prev => ({...prev, [activityId]: users || []}));
+      const acts = await userService.getEnrolledActivities(userId);
+      setUserActivities(prev => ({...prev, [userId]: acts || []}));
+      alert("Usuario desinscrito correctamente");
+    } catch (error) {
+      alert("Error al desinscribir: " + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const openEnrollModal = (user) => {
+    setSelectedUser(user);
+    setShowEnrollModal(true);
+  };
+
+  const resetForm = () => {
+    setShowModal(false);
+    setEditingUser(null);
+    setNuevoUsuario({
+      nombre: "",
+      apellidos: "",
+      dni: "",
+      registrationYear: new Date().getFullYear(),
+      isActive: true,
+      actividadIds: [],
+    });
   };
 
   return (
@@ -174,6 +302,7 @@ const Users = () => {
               <th className="px-6 py-2">Apellidos</th>
               <th className="px-6 py-2">DNI</th>
               <th className="px-6 py-2">Año Alta</th>
+              <th className="px-6 py-2">Actividades</th>
               <th className="px-6 py-2 text-center">Estado</th>
               <th className="px-6 py-2 text-center">Acciones</th>
             </tr>
@@ -199,6 +328,17 @@ const Users = () => {
                   <td className="px-6 py-4 border-y border-gray-900 text-[11px] text-gray-400">
                     {user.registrationYear}
                   </td>
+                  <td className="px-6 py-4 border-y border-gray-900">
+                    <button
+                      onClick={() => openEnrollModal(user)}
+                      className="text-[10px] text-[#CCFF00] hover:underline flex items-center gap-1"
+                    >
+                      <CalendarIcon className="w-3 h-3" />
+                      {(userActivities[user.id] || []).length > 0 
+                        ? `${(userActivities[user.id] || []).length} inscrita(s)`
+                        : "Inscribir"}
+                    </button>
+                  </td>
                   <td className="px-6 py-4 border-y border-gray-900 text-center">
                     <span
                       className={`text-[8px] font-black px-2 py-1 rounded ${user.isActive ? "bg-[#CCFF00] text-black" : "bg-red-600 text-white"}`}
@@ -208,6 +348,13 @@ const Users = () => {
                   </td>
                   <td className="px-6 py-4 rounded-r-2xl border-r border-y border-gray-900 text-center">
                     <div className="flex justify-center items-center gap-3">
+                      <button
+                        onClick={() => openEnrollModal(user)}
+                        title="Ver actividades/Inscribir"
+                        className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
+                      >
+                        <CalendarIcon className="w-4 h-4" />
+                      </button>
                       <PencilIcon
                         onClick={() => handleEdit(user)}
                         className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
@@ -216,9 +363,7 @@ const Users = () => {
                         onClick={() => handleDelete(user.id)}
                         title="Eliminar"
                         className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </TrashIcon>
+                      />
                     </div>
                   </td>
                 </tr>
@@ -227,30 +372,20 @@ const Users = () => {
         </table>
       </div>
 
-      {/* MODAL CON NEÓN AL PASAR EL RATÓN (HOVER) */}
+      {/* MODAL NUEVO/EDITAR USUARIO */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#111] border border-gray-800 w-full max-w-md rounded-2xl p-8 relative transition-all duration-300 hover:border-[#CCFF00] hover:shadow-[0_0_30px_rgba(204,255,0,0.15)]">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-[#111] border border-gray-800 w-full max-w-3xl rounded-2xl p-4 sm:p-6 relative transition-all duration-300 hover:border-[#CCFF00]">
             <button
-              onClick={() => {
-                setShowModal(false);
-                setEditingUser(null);
-                setNuevoUsuario({
-                  nombre: "",
-                  apellidos: "",
-                  dni: "",
-                  registrationYear: new Date().getFullYear(),
-                  isActive: true,
-                });
-              }}
-              className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
+              onClick={resetForm}
+              className="absolute top-2 right-2 text-gray-500 hover:text-white transition-colors z-10"
             >
               <XMarkIcon className="w-6 h-6" />
             </button>
-            <h2 className="text-[#CCFF00] font-black uppercase italic tracking-tighter text-2xl mb-6 text-center">
+            <h2 className="text-[#CCFF00] font-black uppercase italic tracking-tighter text-xl sm:text-2xl mb-4 text-center pr-8">
               {editingUser ? "Editar Usuario" : "Nuevo Usuario"}
             </h2>
-            <form onSubmit={editingUser ? handleUpdate : handleSubmit} className="space-y-5">
+            <form onSubmit={editingUser ? handleUpdate : handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="group">
                 <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-1 group-focus-within:text-[#CCFF00]">
                   Nombre
@@ -324,13 +459,151 @@ const Users = () => {
                 />
                 <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Activo</label>
               </div>
-              <button
-                type="submit"
-                className="w-full bg-[#CCFF00] text-black font-black py-4 rounded-xl mt-4 hover:bg-[#b8e600] hover:scale-[1.02] transition-all duration-300 uppercase tracking-widest text-[10px] shadow-[0_10px_20px_rgba(204,255,0,0.15)] active:scale-95"
-              >
-                {editingUser ? "Guardar Cambios" : "Registrar Socio"}
-              </button>
+              
+              {activities.length > 0 && (
+                <div className="group md:col-span-2">
+                  <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-2 group-focus-within:text-[#CCFF00]">
+                    {editingUser ? "Modificar Actividades (máx. 3)" : "Inscribir en Actividades (máx. 3)"}
+                  </label>
+                  <p className="text-[9px] text-gray-500 mb-2">
+                    Seleccionadas: {nuevoUsuario.actividadIds?.length || 0}/3
+                  </p>
+                  <div className="space-y-2 max-h-40 overflow-y-auto bg-black border border-gray-800 rounded-lg p-2">
+                    {activities.map((act) => {
+                      const isSelected = nuevoUsuario.actividadIds?.includes(act.id);
+                      return (
+                        <label
+                          key={act.id}
+                          className={`flex items-center gap-2 cursor-pointer p-1 rounded ${isSelected ? 'bg-[#CCFF00]/20' : 'hover:bg-gray-800'}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected || false}
+                            disabled={!isSelected && (nuevoUsuario.actividadIds?.length || 0) >= 3}
+                            onChange={(e) => {
+                              const current = nuevoUsuario.actividadIds || [];
+                              if (e.target.checked) {
+                                if (current.length < 3) {
+                                  setNuevoUsuario({
+                                    ...nuevoUsuario,
+                                    actividadIds: [...current, act.id],
+                                  });
+                                }
+                              } else {
+                                setNuevoUsuario({
+                                  ...nuevoUsuario,
+                                  actividadIds: current.filter((id) => id !== act.id),
+                                });
+                              }
+                            }}
+                            className="w-4 h-4 accent-[#CCFF00]"
+                          />
+                          <span className="text-white text-xs">{act.title || act.name}</span>
+                          <span className="text-gray-500 text-[10px] ml-auto">{act.schedule}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex items-center justify-end gap-4 pt-2 md:col-span-2">
+                <button
+                  onClick={resetForm}
+                  className="p-3 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-all"
+                  title="Cancelar / Limpiar"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+                <button
+                  type="submit"
+                  className="p-3 rounded-lg bg-[#CCFF00] text-black hover:bg-[#b8e600] transition-all"
+                  title={editingUser ? "Guardar Cambios" : "Registrar Socio"}
+                >
+                  <CheckIcon className="w-6 h-6" />
+                </button>
+              </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL INSCRIBIR ACTIVIDADES */}
+      {showEnrollModal && selectedUser && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-auto">
+          <div className="bg-[#111] border border-gray-800 w-full max-w-lg rounded-2xl p-6 relative transition-all duration-300 hover:border-[#CCFF00] my-8">
+            <button
+              onClick={() => {
+                setShowEnrollModal(false);
+                setSelectedUser(null);
+              }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-white"
+            >
+              <XMarkIcon className="w-6 h-6" />
+            </button>
+            <h2 className="text-[#CCFF00] font-black uppercase italic text-xl mb-2">
+              Actividades de {selectedUser.name} {selectedUser.lastName}
+            </h2>
+            <p className="text-gray-500 text-xs mb-6">DNI: {selectedUser.dni}</p>
+            
+            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+              {activities.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No hay actividades disponibles</p>
+              ) : (
+                activities.map((act) => {
+                  const enrolledUsers = enrolledUsersByActivity[act.id] || [];
+                  const isEnrolled = enrolledUsers.some(u => u.id === selectedUser.id);
+                  const capacity = act.capacity || 20;
+                  const spotsLeft = Math.max(0, capacity - enrolledUsers.length);
+                  
+                  return (
+                    <div
+                      key={act.id}
+                      className={`p-3 rounded-lg border ${
+                        isEnrolled 
+                          ? "border-[#CCFF00] bg-[#CCFF00]/10" 
+                          : "border-gray-800 bg-black/50"
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="text-white font-bold text-sm">{act.title || act.name}</h3>
+                          <p className="text-gray-500 text-xs">
+                            {enrolledUsers.length}/{capacity} inscritos
+                            {spotsLeft > 0 
+                              ? ` • ${spotsLeft} plazas libres` 
+                              : spotsLeft === 0 && !isEnrolled 
+                                ? " • COMPLETO" 
+                                : ""}
+                          </p>
+                          {act.schedule && <p className="text-gray-400 text-[10px]">{act.schedule}</p>}
+                        </div>
+                        {isEnrolled ? (
+                          <button
+                            onClick={() => handleUnenrollUser(selectedUser.id, act.id)}
+                            className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded font-bold"
+                          >
+                            Desinscribir
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleEnrollUser(selectedUser.id, act.id)}
+                            disabled={spotsLeft === 0}
+                            className={`text-xs px-3 py-1.5 rounded font-bold ${
+                              spotsLeft === 0
+                                ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                                : "bg-[#CCFF00] hover:bg-[#b8e600] text-black"
+                            }`}
+                          >
+                            Inscribir
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       )}
