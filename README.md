@@ -60,7 +60,7 @@ Arquitectura basada en componentes reutilizables:
 ### Teachers (Profesores)
 ```js
 {
-  id,
+  id: Number,
   name: String,
   dni: String,
   hiringYear: Number,
@@ -72,22 +72,28 @@ Arquitectura basada en componentes reutilizables:
 ### Users (Usuarios)
 ```js
 {
-  id,
+  id: Number,
   name: String,
   lastName: String,
   dni: String,
   email: String (optional),
   phone: String (optional),
   registrationYear: Number,
-  isActive: Boolean
+  isActive: Boolean,
+  imageUrl: String (optional)
 }
 ```
 
 ### Activities (Actividades)
 ```js
 {
-  id,
-  // campos según backend
+  id: Number,
+  title: String,
+  description: String,
+  price: Number,
+  teacherId: Number (FK),
+  teacher: Teacher (relation),
+  capacity: Number (optional)
 }
 ```
 
