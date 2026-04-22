@@ -167,7 +167,7 @@ const Teachers = () => {
                         <PlusIcon className="w-6 h-6" />
 
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
-            bg-black text-white text-xs px-2 py-1 rounded 
+            bg-gray-800 text-white text-xs px-2 py-1 rounded 
             opacity-0 group-hover:opacity-100 transition z-50 whitespace-nowrap">
                             Nuevo profesor
                         </span>

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { CheckIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { activityService } from "../../services/activityService";
-import { teacherService } from "../../services/teacherService";
+import React, {useState, useEffect} from "react";
+import {CheckIcon, XMarkIcon, PlusIcon} from "@heroicons/react/24/outline";
+import {activityService} from "../../services/activityService";
+import {teacherService} from "../../services/teacherService";
 import ActivityCard from "../../components/Activity/ActivityCard";
 import imgCross from "../../assets/CrossTraining.jpg";
 
@@ -81,23 +81,22 @@ function Activities() {
 
   const cargarActividades = async () => {
     try {
-      const [data, teachers] = await Promise.all([
-        activityService.getAll(),
-        teacherService.getAll()
-      ]);
-      
+      const [data, teachers] = await Promise.all([activityService.getAll(), teacherService.getAll()]);
+
       const teachersMap = {};
-      teachers.forEach(t => { teachersMap[t.id] = t; });
-      
-      const actividadesFormateadas = data.map(act => {
+      teachers.forEach((t) => {
+        teachersMap[t.id] = t;
+      });
+
+      const actividadesFormateadas = data.map((act) => {
         const teacher = teachersMap[act.teacherId] || {};
         return {
           ...act,
           name: act.title || act.name,
           image: act.imageUrl,
-          coach: act.teacherName || teacher.name || 'Sin asignar',
-          contact: '',
-          coachImage: teacher.imageUrl || '',
+          coach: act.teacherName || teacher.name || "Sin asignar",
+          contact: "",
+          coachImage: teacher.imageUrl || "",
         };
       });
       setActivities(actividadesFormateadas);
@@ -116,37 +115,34 @@ function Activities() {
     .filter((act) => {
       if (!searchTerm) return true;
       const term = searchTerm.toLowerCase();
-      return (
-        (act.title || act.name)?.toLowerCase().includes(term) ||
-        act.description?.toLowerCase().includes(term)
-      );
+      return (act.title || act.name)?.toLowerCase().includes(term) || act.description?.toLowerCase().includes(term);
     })
-    .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''));
+    .sort((a, b) => (a.title || a.name || "").localeCompare(b.title || b.name || ""));
 
   const handleDeleteActivity = async (id) => {
-    if (!window.confirm('¿Eliminar esta actividad?')) return;
+    if (!window.confirm("¿Eliminar esta actividad?")) return;
     try {
       await activityService.delete(id);
-      setActivities(activities.filter(a => a.id !== id));
-      alert('Actividad eliminada');
+      setActivities(activities.filter((a) => a.id !== id));
+      alert("Actividad eliminada");
     } catch (error) {
-      alert('Error al eliminar: ' + error.message);
+      alert("Error al eliminar: " + error.message);
     }
   };
 
   const handleEditActivity = (id) => {
-    const activity = activities.find(a => a.id === id);
+    const activity = activities.find((a) => a.id === id);
     if (activity) {
       setEditingId(id);
       setNuevaActividad({
-        titulo: activity.title || activity.name || '',
-        descripcion: activity.description || '',
-        precio: activity.price?.toString() || '',
-        fecha: activity.startDate || '',
-        profesorId: activity.teacherId?.toString() || '',
-        imagenUrl: activity.imageUrl || '',
-        horario: activity.schedule || '',
-        capacidad: activity.capacity?.toString() || '',
+        titulo: activity.title || activity.name || "",
+        descripcion: activity.description || "",
+        precio: activity.price?.toString() || "",
+        fecha: activity.startDate || "",
+        profesorId: activity.teacherId?.toString() || "",
+        imagenUrl: activity.imageUrl || "",
+        horario: activity.schedule || "",
+        capacidad: activity.capacity?.toString() || "",
       });
       setShowModal(true);
     }
@@ -177,7 +173,16 @@ function Activities() {
       }
       setShowModal(false);
       setEditingId(null);
-      setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" });
+      setNuevaActividad({
+        titulo: "",
+        descripcion: "",
+        precio: "",
+        fecha: "",
+        profesorId: "",
+        imagenUrl: "",
+        horario: "",
+        capacidad: "",
+      });
       cargarActividades();
     } catch (error) {
       alert("Fallo al guardar: " + error.message);
@@ -187,15 +192,25 @@ function Activities() {
   return (
     <div className="w-full min-h-screen bg-[#0A0A0A] p-6 flex flex-col items-center overflow-x-hidden">
       <div className="max-w-[1100px] w-full">
-        <h1 className="text-[#CCFF00] text-5xl font-black uppercase italic mb-16 border-l-8 border-[#CCFF00] pl-6">
+        <h1 className="w-full text-[#CCFF00] text-5xl font-black uppercase italic mb-16 border-l-8 border-[#CCFF00] pl-6">
           ACTIVIDADES
         </h1>
-        
+
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 w-full">
           <div className="relative w-full md:max-w-md group">
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-              <svg className="w-5 h-5 text-gray-500 group-focus-within:text-[#CCFF00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="w-5 h-5 text-gray-500 group-focus-within:text-[#CCFF00] transition-colors"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
             <input
@@ -209,16 +224,34 @@ function Activities() {
 
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center justify-center bg-[#CCFF00] hover:bg-[#b8e600] text-black w-12 h-12 rounded-xl transition-all hover:scale-110 shadow-[0_0_20px_rgba(204,255,0,0.2)] active:scale-95"
+            className="group relative flex items-center justify-center 
+            bg-[#CCFF00] hover:bg-[#b8e600] text-black 
+            w-12 h-12 rounded-xl transition-all 
+            hover:scale-110 active:scale-95 
+            shadow-[0_0_20px_rgba(204,255,0,0.2)] z-10"
           >
             <PlusIcon className="w-6 h-6" />
+            <span
+              className=" block absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+            bg-gray-800 text-white text-xs px-2 py-1 rounded 
+            opacity-0 group-hover:opacity-100 transition z-50 whitespace-nowrap"
+            >
+              Nueva Actividad
+            </span>
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {filteredActivities.length > 0 ? (
             filteredActivities.map((act) => (
-              <ActivityCard key={act.id} id={act.id} name={act.title || act.name} {...act} onEdit={handleEditActivity} onDelete={handleDeleteActivity} />
+              <ActivityCard
+                key={act.id}
+                id={act.id}
+                name={act.title || act.name}
+                {...act}
+                onEdit={handleEditActivity}
+                onDelete={handleDeleteActivity}
+              />
             ))
           ) : (
             <p className="text-white text-center col-span-full opacity-50">
@@ -232,8 +265,28 @@ function Activities() {
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-[#1A1A1A] p-8 rounded-xl w-full max-w-xl border-2 border-transparent transition-all duration-300 hover:border-[#CCFF00]">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-[#CCFF00] text-2xl font-bold uppercase tracking-wider">{nuevaActividad.titulo ? 'Editar Actividad' : 'Nueva Actividad'}</h2>
-                <button onClick={() => { setShowModal(false); setEditingId(null); setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" }); }} className="text-gray-400 hover:text-white"><XMarkIcon className="w-6 h-6" /></button>
+                <h2 className="text-[#CCFF00] text-2xl font-bold uppercase tracking-wider">
+                  {nuevaActividad.titulo ? "Editar Actividad" : "Nueva Actividad"}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingId(null);
+                    setNuevaActividad({
+                      titulo: "",
+                      descripcion: "",
+                      precio: "",
+                      fecha: "",
+                      profesorId: "",
+                      imagenUrl: "",
+                      horario: "",
+                      capacidad: "",
+                    });
+                  }}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -319,16 +372,39 @@ function Activities() {
                   >
                     <option value="">Seleccionar profesor</option>
                     {profesores
-                      .filter(p => p.isActive !== false)
-                      .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-                      .map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
+                      .filter((p) => p.isActive !== false)
+                      .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+                      .map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div className="flex justify-end gap-6 mt-6">
-                  <button type="button" onClick={() => { setShowModal(false); setEditingId(null); setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" }); }} className="text-gray-500 hover:text-red-500 text-3xl">&times;</button>
-                  <button type="submit" className="text-gray-500 hover:text-[#CCFF00]"><CheckIcon className="w-8 h-8" /></button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowModal(false);
+                      setEditingId(null);
+                      setNuevaActividad({
+                        titulo: "",
+                        descripcion: "",
+                        precio: "",
+                        fecha: "",
+                        profesorId: "",
+                        imagenUrl: "",
+                        horario: "",
+                        capacidad: "",
+                      });
+                    }}
+                    className="text-gray-500 hover:text-red-500 text-3xl"
+                  >
+                    &times;
+                  </button>
+                  <button type="submit" className="text-gray-500 hover:text-[#CCFF00]">
+                    <CheckIcon className="w-8 h-8" />
+                  </button>
                 </div>
               </form>
             </div>
