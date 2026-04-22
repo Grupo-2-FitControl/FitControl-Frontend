@@ -54,6 +54,95 @@ Arquitectura basada en componentes reutilizables:
 
 ---
 
+## 🗄️ Estructura de Datos (Backend)
+
+### Teachers (Profesores)
+```sql
+- id (PK)
+- nombre
+- dni (UNIQUE)
+- email (UNIQUE)
+- contratado (boolean)
+- imagen (URL)
+```
+
+### Users (Usuarios)
+```sql
+- id (PK)
+- nombre
+- apellidos
+- dni (UNIQUE)
+- telefono
+- activo (boolean)
+- imagen (URL)
+```
+
+### Activities (Actividades)
+```sql
+- id (PK)
+- titulo
+- descripcion
+- precio (decimal)
+- fecha_inicio (datetime)
+- imagen (URL)
+- teacher_id (FK)
+```
+
+### Activity_Users (Inscripciones - M2M)
+```
+- activity_id (FK)
+- users_id (FK)
+```
+
+---
+
+## 🔌 Endpoints Disponibles (Backend)
+
+### TEACHERS - `/api/teachers`
+```
+GET    /api/teachers              - Listar todos
+GET    /api/teachers/active       - Solo contratados
+GET    /api/teachers/{id}         - Obtener uno
+GET    /api/teachers/{id}/activities
+
+POST   /api/teachers              - Crear
+PUT    /api/teachers/{id}         - Actualizar
+DELETE /api/teachers/{id}         - Eliminar
+```
+
+### ACTIVITIES - `/api/activities`
+```
+GET    /api/activities            - Listar todas
+GET    /api/activities/active
+GET    /api/activities/future
+GET    /api/activities/{id}
+GET    /api/activities/teacher/{teacherId}
+
+POST   /api/activities            - Crear con teacherId
+PUT    /api/activities/{id}
+DELETE /api/activities/{id}
+```
+
+### USERS - `/api/users`
+```
+GET    /api/users
+GET    /api/users/active
+GET    /api/users/{id}
+GET    /api/users/{id}/activities
+
+POST   /api/users
+PUT    /api/users/{id}
+DELETE /api/users/{id}
+```
+
+### ENROLLMENTS - `/api/enrollments`
+```
+POST   /api/enrollments/{activityId}/{usersId}
+DELETE /api/enrollments/{activityId}/{usersId}
+```
+
+---
+
 ## 📁 Estructura del proyecto
 
 ```

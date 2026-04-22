@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckIcon, XMarkIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { activityService } from "../../services/activityService";
+import { teacherService } from "../../services/teacherService";
 import ActivityCard from "../../components/Activity/ActivityCard";
 import imgCross from "../../assets/CrossTraining.jpg";
 
@@ -68,16 +69,39 @@ function Activities() {
     precio: "",
     fecha: "",
     profesorId: "",
+    imagenUrl: "",
+    horario: "",
+    capacidad: "",
   });
   const [profesores, setProfesores] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activities, setActivities] = useState([]);
+  const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const cargarActividades = async () => {
     try {
-      const data = await activityService.getAll();
-      setActivities(data);
+      const [data, teachers] = await Promise.all([
+        activityService.getAll(),
+        teacherService.getAll()
+      ]);
+      
+      const teachersMap = {};
+      teachers.forEach(t => { teachersMap[t.id] = t; });
+      
+      const actividadesFormateadas = data.map(act => {
+        const teacher = teachersMap[act.teacherId] || {};
+        return {
+          ...act,
+          name: act.title || act.name,
+          image: act.imageUrl,
+          coach: act.teacherName || teacher.name || 'Sin asignar',
+          contact: '',
+          coachImage: teacher.imageUrl || '',
+        };
+      });
+      setActivities(actividadesFormateadas);
+      setProfesores(teachers);
     } catch (error) {
       console.error("Error al traer actividades:", error.message);
     }
@@ -88,31 +112,72 @@ function Activities() {
   }, []);
 
   // --- LÓGICA DE FILTRADO CORREGIDA ---
-  const filteredActivities = (activities.length > 0 ? activities : misActividades).filter((act) => {
-    if (!searchTerm) return true;
-    const term = searchTerm.toLowerCase();
-    return (
-      act.name?.toLowerCase().includes(term) ||
-      act.description?.toLowerCase().includes(term)
-    );
-  });
+  const filteredActivities = (activities.length > 0 ? activities : misActividades)
+    .filter((act) => {
+      if (!searchTerm) return true;
+      const term = searchTerm.toLowerCase();
+      return (
+        (act.title || act.name)?.toLowerCase().includes(term) ||
+        act.description?.toLowerCase().includes(term)
+      );
+    })
+    .sort((a, b) => (a.title || a.name || '').localeCompare(b.title || b.name || ''));
+
+  const handleDeleteActivity = async (id) => {
+    if (!window.confirm('¿Eliminar esta actividad?')) return;
+    try {
+      await activityService.delete(id);
+      setActivities(activities.filter(a => a.id !== id));
+      alert('Actividad eliminada');
+    } catch (error) {
+      alert('Error al eliminar: ' + error.message);
+    }
+  };
+
+  const handleEditActivity = (id) => {
+    const activity = activities.find(a => a.id === id);
+    if (activity) {
+      setEditingId(id);
+      setNuevaActividad({
+        titulo: activity.title || activity.name || '',
+        descripcion: activity.description || '',
+        precio: activity.price?.toString() || '',
+        fecha: activity.startDate || '',
+        profesorId: activity.teacherId?.toString() || '',
+        imagenUrl: activity.imageUrl || '',
+        horario: activity.schedule || '',
+        capacidad: activity.capacity?.toString() || '',
+      });
+      setShowModal(true);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const payload = {
+        title: nuevaActividad.titulo,
         name: nuevaActividad.titulo,
         description: nuevaActividad.descripcion,
-        schedule: "Horario por definir",
-        capacity: parseInt(nuevaActividad.precio) || 0,
+        schedule: nuevaActividad.horario || "Horario por definir",
+        price: parseFloat(nuevaActividad.precio) || 0,
+        capacity: parseInt(nuevaActividad.capacidad) || 20,
         startDate: nuevaActividad.fecha,
         teacherId: parseInt(nuevaActividad.profesorId),
+        imageUrl: nuevaActividad.imagenUrl,
         isActive: true,
       };
 
-      await activityService.create(payload);
-      alert("¡Actividad guardada!");
+      if (editingId) {
+        await activityService.update(editingId, payload);
+        alert("¡Actividad actualizada!");
+      } else {
+        await activityService.create(payload);
+        alert("¡Actividad guardada!");
+      }
       setShowModal(false);
+      setEditingId(null);
+      setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" });
       cargarActividades();
     } catch (error) {
       alert("Fallo al guardar: " + error.message);
@@ -153,7 +218,7 @@ function Activities() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {filteredActivities.length > 0 ? (
             filteredActivities.map((act) => (
-              <ActivityCard key={act.id} id={act.id} {...act} />
+              <ActivityCard key={act.id} id={act.id} name={act.title || act.name} {...act} onEdit={handleEditActivity} onDelete={handleDeleteActivity} />
             ))
           ) : (
             <p className="text-white text-center col-span-full opacity-50">
@@ -167,8 +232,8 @@ function Activities() {
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-[#1A1A1A] p-8 rounded-xl w-full max-w-xl border-2 border-transparent transition-all duration-300 hover:border-[#CCFF00]">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-[#CCFF00] text-2xl font-bold uppercase tracking-wider">Nueva Actividad</h2>
-                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white"><XMarkIcon className="w-6 h-6" /></button>
+                <h2 className="text-[#CCFF00] text-2xl font-bold uppercase tracking-wider">{nuevaActividad.titulo ? 'Editar Actividad' : 'Nueva Actividad'}</h2>
+                <button onClick={() => { setShowModal(false); setEditingId(null); setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" }); }} className="text-gray-400 hover:text-white"><XMarkIcon className="w-6 h-6" /></button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -188,6 +253,16 @@ function Activities() {
                     value={nuevaActividad.descripcion}
                     onChange={(e) => setNuevaActividad({...nuevaActividad, descripcion: e.target.value})}
                     className="w-full bg-[#262626] border border-gray-800 rounded-lg p-2 text-white focus:border-[#CCFF00] outline-none h-20"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-400 text-sm font-bold mb-1 uppercase">URL de Imagen *</label>
+                  <input
+                    type="url"
+                    value={nuevaActividad.imagenUrl}
+                    onChange={(e) => setNuevaActividad({...nuevaActividad, imagenUrl: e.target.value})}
+                    placeholder="https://res.cloudinary.com/... (opcional)"
+                    className="w-full bg-[#262626] border border-gray-800 rounded-lg p-2 text-white focus:border-[#CCFF00] outline-none"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -212,8 +287,47 @@ function Activities() {
                     />
                   </div>
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-400 text-sm font-bold mb-1 uppercase">Horario</label>
+                    <input
+                      type="text"
+                      value={nuevaActividad.horario}
+                      onChange={(e) => setNuevaActividad({...nuevaActividad, horario: e.target.value})}
+                      placeholder="L-V 10:00"
+                      className="w-full bg-[#262626] border border-gray-800 rounded-lg p-2 text-white focus:border-[#CCFF00] outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400 text-sm font-bold mb-1 uppercase">Capacidad</label>
+                    <input
+                      type="number"
+                      value={nuevaActividad.capacidad}
+                      onChange={(e) => setNuevaActividad({...nuevaActividad, capacidad: e.target.value})}
+                      placeholder="20"
+                      className="w-full bg-[#262626] border border-gray-800 rounded-lg p-2 text-white focus:border-[#CCFF00] outline-none"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-gray-400 text-sm font-bold mb-1 uppercase">Profesor *</label>
+                  <select
+                    required
+                    value={nuevaActividad.profesorId}
+                    onChange={(e) => setNuevaActividad({...nuevaActividad, profesorId: e.target.value})}
+                    className="w-full bg-[#262626] border border-gray-800 rounded-lg p-2 text-white focus:border-[#CCFF00] outline-none"
+                  >
+                    <option value="">Seleccionar profesor</option>
+                    {profesores
+                      .filter(p => p.isActive !== false)
+                      .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+                      .map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
                 <div className="flex justify-end gap-6 mt-6">
-                  <button type="button" onClick={() => setShowModal(false)} className="text-gray-500 hover:text-red-500 text-3xl">&times;</button>
+                  <button type="button" onClick={() => { setShowModal(false); setEditingId(null); setNuevaActividad({ titulo: "", descripcion: "", precio: "", fecha: "", profesorId: "", imagenUrl: "", horario: "", capacidad: "" }); }} className="text-gray-500 hover:text-red-500 text-3xl">&times;</button>
                   <button type="submit" className="text-gray-500 hover:text-[#CCFF00]"><CheckIcon className="w-8 h-8" /></button>
                 </div>
               </form>

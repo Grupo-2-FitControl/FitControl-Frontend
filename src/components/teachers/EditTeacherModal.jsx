@@ -41,9 +41,9 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
         try {
             const res = await teacherService.update(teacher.id, {
                 ...form,
-                hiring_year: parseInt(form.hiring_year),
+                hiringYear: parseInt(form.hiring_year),
             });
-            onSaved(res.data);
+            onSaved(res);
         } catch (e) {
             setError(e.message);
         } finally {

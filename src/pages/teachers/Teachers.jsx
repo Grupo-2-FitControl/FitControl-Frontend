@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Teachers = () => {
+
     const [teachers, setTeachers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -23,9 +24,9 @@ const Teachers = () => {
     const [formData, setFormData] = useState({
         name: '',
         dni: '',
-        hiring_year: new Date().getFullYear(),
-        is_active: true,
-        image_url: '',
+        hiringYear: new Date().getFullYear(),
+        isActive: true,
+        imageUrl: '',
     });
 
     const showToast = (message, type = 'success') =>
@@ -34,8 +35,21 @@ const Teachers = () => {
     const loadTeachers = async () => {
         setIsLoading(true);
         try {
-            const res = await teacherService.getAll();
-            setTeachers(res.data);
+            const data = await teacherService.getAll();
+            console.log('Teachers loaded:', data.length);
+            const teachersWithActivities = await Promise.all(
+                data.map(async (t) => {
+                    try {
+                        const activities = await teacherService.getActivities(t.id);
+                        console.log(`Activities for ${t.name}:`, activities.length);
+                        return { ...t, activities };
+                    } catch (err) {
+                        console.error(`Error loading activities for ${t.name}:`, err.message);
+                        return { ...t, activities: [] };
+                    }
+                })
+            );
+            setTeachers(teachersWithActivities);
         } catch (e) {
             showToast(e.message || 'Error loading teachers', 'error');
         } finally {
@@ -48,10 +62,15 @@ const Teachers = () => {
     }, []);
 
     const filteredTeachers = teachers
-        .filter(t => t.is_active !== false)
         .filter(t =>
             t.name?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        )
+        .sort((a, b) => {
+            if (a.isActive === b.isActive) {
+                return (a.name || '').localeCompare(b.name || '');
+            }
+            return a.isActive ? -1 : 1;
+        });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -68,18 +87,16 @@ const Teachers = () => {
         }
 
         try {
-            const res = await teacherService.create({
-                ...formData,
-                hiring_year: Number(formData.hiring_year),
-            });
-
-            setTeachers(prev => [...prev, res.data]);
+            const newTeacher = await teacherService.create(formData);
+            if (newTeacher) {
+                setTeachers(prev => [...prev, newTeacher]);
+            }
             showToast('Teacher created successfully');
 
             resetForm();
             setIsCreateModalOpen(false);
         } catch (e) {
-            showToast(e.message || 'Error creating teacher', 'error');
+            showToast(e.response?.data?.message || e.message || 'Error creating teacher', 'error');
         }
     };
 
@@ -96,6 +113,10 @@ const Teachers = () => {
     };
 
     const handleSaved = (updatedTeacher) => {
+        if (!updatedTeacher) {
+            showToast('Error saving teacher', 'error');
+            return;
+        }
         setTeachers(prev =>
             prev.map(t => (t.id === updatedTeacher.id ? updatedTeacher : t))
         );
@@ -111,190 +132,214 @@ const Teachers = () => {
         setFormData({
             name: '',
             dni: '',
-            hiring_year: new Date().getFullYear(),
-            is_active: true,
-            image_url: '',
+            hiringYear: new Date().getFullYear(),
+            isActive: true,
+            imageUrl: '',
         });
 
     return (
-        <div className="p-6 bg-black min-h-screen text-white">
+        <div className="w-full min-h-screen bg-[#0A0A0A] p-6 flex flex-col items-center">
+            <div className="max-w-[1100px] w-full">
 
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-2xl font-bold uppercase">
-                        Profesores
-                    </h1>
-                    <p className="text-zinc-400 text-sm">
-                        Gestión de profesores
-                    </p>
+                {/* HEADER */}
+                <h1 className="text-[#CCFF00] text-5xl font-black uppercase italic mb-12 border-l-8 border-[#CCFF00] pl-6">
+                    PROFESORES
+                </h1>
+
+                {/* SEARCH + ADD */}
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 w-full">
+
+                    <input
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="BUSCAR PROFESOR..."
+                        className="w-full md:max-w-md bg-[#111] border border-gray-800 text-white text-[10px] font-bold tracking-widest rounded-xl py-4 px-4 outline-none focus:border-[#CCFF00]"
+                    />
+
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="group relative flex items-center justify-center 
+            bg-[#CCFF00] hover:bg-[#b8e600] text-black 
+            w-12 h-12 rounded-xl transition-all 
+            hover:scale-110 active:scale-95 
+            shadow-[0_0_20px_rgba(204,255,0,0.2)] z-10"
+                    >
+                        <PlusIcon className="w-6 h-6" />
+
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+            bg-black text-white text-xs px-2 py-1 rounded 
+            opacity-0 group-hover:opacity-100 transition z-50 whitespace-nowrap">
+                            Nuevo profesor
+                        </span>
+                    </button>
+
                 </div>
 
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="bg-[#D4FF00] text-black p-3 rounded flex items-center justify-center"
-                >
-                    <PlusIcon className="w-6 h-6" />
-                </button>
-            </div>
-
-            <input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar profesor..."
-                className="w-full bg-zinc-800 p-3 rounded mb-6"
-            />
-
-            {isLoading ? (
-                <p>Loading...</p>
-            ) : (
-                <div className="grid md:grid-cols-3 gap-4">
-                    {filteredTeachers.map(t => (
-                        <TeacherCard
-                            key={t.id}
-                            teacher={t}
-                            onEdit={setEditingTeacher}
-                            onDelete={handleDelete}
-                            onSchedule={handleSchedule}
-                        />
-                    ))}
-                </div>
-            )}
-
-            {isCreateModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40 p-4 overflow-y-auto">
-                    <div className="bg-zinc-900 rounded p-8 w-full max-w-2xl border border-zinc-700 max-h-[90vh] overflow-y-auto">
-
-                        <h2 className="text-2xl font-extrabold text-[#D4FF00] mb-6 uppercase">
-                            Nuevo Profesor
-                        </h2>
-
-                        <form onSubmit={handleSubmit} className="space-y-6">
-
-                            <input
-                                value={formData.name}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, name: e.target.value })
-                                }
-                                placeholder="Nombre y apellidos"
-                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
+                {/* LIST */}
+                {isLoading ? (
+                    <p className="text-white">Loading...</p>
+                ) : (
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {filteredTeachers.map(t => (
+                            <TeacherCard
+                                key={t.id}
+                                teacher={t}
+                                onEdit={setEditingTeacher}
+                                onDelete={handleDelete}
+                                onSchedule={handleSchedule}
                             />
+                        ))}
+                    </div>
+                )}
 
-                            <div className="grid grid-cols-2 gap-4">
+                {/* MODAL CREATE */}
+                {isCreateModalOpen && (
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
-                                <input
-                                    value={formData.dni}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            dni: e.target.value.toUpperCase(),
-                                        })
-                                    }
-                                    placeholder="DNI (12345678A)"
-                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                                />
+                        <div className="bg-[#1A1A1A] p-8 rounded-xl w-full max-w-xl border-2 border-transparent hover:border-[#CCFF00]">
 
-                                <input
-                                    type="number"
-                                    value={formData.hiring_year}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            hiring_year: e.target.value,
-                                        })
-                                    }
-                                    placeholder="Hiring year"
-                                    className="bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                                />
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.is_active}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            is_active: e.target.checked,
-                                        })
-                                    }
-                                    className="w-5 h-5 cursor-pointer"
-                                />
-                                <label className="text-white">
-                                    Activo
-                                </label>
-                            </div>
-
-                            <input
-                                value={formData.image_url}
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        image_url: e.target.value,
-                                    })
-                                }
-                                placeholder="Imagen URL (opcional)"
-                                className="w-full bg-zinc-800 border border-[#D4FF00] rounded px-3 py-2 text-white"
-                            />
-
-                            <div className="flex justify-between items-center pt-4 gap-3">
+                            {/* HEADER */}
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-[#CCFF00] text-2xl font-bold uppercase">
+                                    Nuevo Profesor
+                                </h2>
 
                                 <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="group bg-zinc-700 text-[#D4FF00] p-3 rounded relative"
-                                >
-                                    <ArrowPathIcon className="w-5 h-5" />
-
-                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
-                                        Reiniciar formulario
-                                    </span>
-                                </button>
-
-                                <button
-                                    type="button"
                                     onClick={() => setIsCreateModalOpen(false)}
-                                    className="group border border-zinc-600 text-white p-3 rounded relative"
+                                    className="group relative"
                                 >
-                                    <XMarkIcon className="w-5 h-5" />
-
-                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                                    <XMarkIcon className="w-6 h-6 text-gray-400 hover:text-white" />
+                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                  bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-50">
                                         Cerrar
                                     </span>
                                 </button>
-
-                                <button
-                                    type="submit"
-                                    className="group bg-[#D4FF00] text-black p-3 rounded relative"
-                                >
-                                    <CheckIcon className="w-5 h-5" />
-
-                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
-                                        Guardar
-                                    </span>
-                                </button>
-
                             </div>
 
-                        </form>
+                            {/* FORM */}
+                            <form onSubmit={handleSubmit} className="space-y-4">
+
+                                {/* NAME */}
+                                <div>
+                                    <label className="text-gray-400 text-sm uppercase">Nombre y apellidos</label>
+                                    <input
+                                        value={formData.name}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, name: e.target.value })
+                                        }
+                                        className="w-full bg-[#262626] p-2 rounded text-white border border-gray-800 focus:border-[#CCFF00]"
+                                    />
+                                </div>
+
+                                {/* DNI + YEAR */}
+                                <div className="grid grid-cols-2 gap-4">
+
+                                    <input
+                                        value={formData.dni}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                dni: e.target.value.toUpperCase(),
+                                            })
+                                        }
+                                        placeholder="DNI"
+                                        className="bg-[#262626] p-2 rounded text-white border border-gray-800 focus:border-[#CCFF00]"
+                                    />
+
+                                    <input
+                                        type="number"
+                                        value={formData.hiringYear}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                hiringYear: parseInt(e.target.value),
+                                            })
+                                        }
+                                        className="bg-[#262626] p-2 rounded text-white border border-gray-800 focus:border-[#CCFF00]"
+                                    />
+                                </div>
+
+                                {/* ACTIVE */}
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.isActive}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                isActive: e.target.checked,
+                                            })
+                                        }
+                                        className="accent-[#CCFF00]"
+                                    />
+                                    <label className="text-gray-300 uppercase text-sm">
+                                        Activo
+                                    </label>
+                                </div>
+
+                                {/* IMAGE */}
+                                <input
+                                    value={formData.imageUrl}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            imageUrl: e.target.value,
+                                        })
+                                    }
+                                    placeholder="Imagen URL"
+                                    className="w-full bg-[#262626] p-2 rounded text-white border border-gray-800 focus:border-[#CCFF00]"
+                                />
+
+                                {/* BUTTONS */}
+                                <div className="flex justify-end gap-6 mt-6">
+
+                                    <button type="button" onClick={resetForm} className="group relative">
+                                        <ArrowPathIcon className="w-6 h-6 text-gray-400 hover:text-white" />
+                                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition z-50">
+                                            Reiniciar
+                                        </span>
+                                    </button>
+
+                                    <button type="button" onClick={() => setIsCreateModalOpen(false)} className="group relative">
+                                        <XMarkIcon className="w-6 h-6 text-red-400" />
+                                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition z-50">
+                                            Cancelar
+                                        </span>
+                                    </button>
+
+                                    <button type="submit" className="group relative">
+                                        <CheckIcon className="w-6 h-6 text-[#CCFF00]" />
+                                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition z-50">
+                                            Guardar
+                                        </span>
+                                    </button>
+
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {editingTeacher && (
-                <EditTeacherModal
-                    teacher={editingTeacher}
-                    onClose={() => setEditingTeacher(null)}
-                    onSaved={handleSaved}
-                />
-            )}
+                {/* EDIT MODAL */}
+                {editingTeacher && (
+                    <EditTeacherModal
+                        teacher={editingTeacher}
+                        onClose={() => setEditingTeacher(null)}
+                        onSaved={handleSaved}
+                    />
+                )}
 
-            {toast && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    onClose={() => setToast(null)}
-                />
-            )}
+                {/* TOAST */}
+                {toast && (
+                    <Toast
+                        message={toast.message}
+                        type={toast.type}
+                        onClose={() => setToast(null)}
+                    />
+                )}
+
+            </div>
         </div>
     );
 };
