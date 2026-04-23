@@ -446,15 +446,6 @@ USERS  (M) ←─────→ (M) ACTIVITIES
 
 ---
 
-## 🤝 Contribución
-
-1. Crear rama desde `dev`
-2. Commit (`feat:` / `fix:`)
-3. Push
-4. Pull Request
-
----
-
 ## 📄 Licencia
 
 MIT License
