@@ -30,7 +30,7 @@ function Navbar() {
               <span className="font-bold text-sm uppercase text-primary">
                 Fit Control
               </span>
-              <p className="uppercase text-lime-500 text-xs font-bold">
+              <p className="uppercase text-secondary text-xs font-bold">
                 Gym Manager
               </p>
             </div>

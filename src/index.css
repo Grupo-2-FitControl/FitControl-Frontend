@@ -23,7 +23,7 @@
   --text-secondary: #d4ff00;
   --text-terciary: #ff5722;
   --background: #000000;
-
+  
   --navbar-height: 80px;
 }
 
@@ -52,17 +52,26 @@
   width: 100%;
   color: var(--text-primary);
   transition: all 0.3s;
-  padding: 10px;
+  padding: 10px 20px;
   font-weight: bold;
+  border-radius: 10px;
 }
 
 .nav-link:hover {
-  background-color: rgba(55, 55, 55, 0.5);
+  color: var(--text-secondary);
 }
 .nav-active {
+  border-radius: 10px;
   background: #d4ff00;
   color: black;
   font-weight: bold;
-  padding: 10px;
+  padding: 10px 20px;
   box-shadow: 5px 5px 0 #95b201;
+}
+.borderHighlighted {
+  transition: border 1s ease;
+  border: 1px solid transparent;
+}
+.borderHighlighted:hover {
+  border: 1px solid var(--text-secondary);
 }
