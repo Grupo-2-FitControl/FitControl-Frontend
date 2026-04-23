@@ -1,33 +1,75 @@
+import { useState } from "react";
+import { FaInstagram, FaFacebook, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
+const SocialIcon = ({ href, label, Icon }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        color: hovered ? "#fb923c" : "#CCFF00",
+        transform: hovered ? "scale(1.5)" : "scale(1)",
+        display: "inline-block",
+        transition: "color 0.2s ease, transform 0.2s ease",
+      }}
+    >
+      <Icon size={28} />
+    </a>
+  );
+};
+
 function Footer() {
   return (
-    <footer className="p-8 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-zinc-800 bg-black text-zinc-400">
-      <div className="flex items-center gap-4">
-        <img
-          src="src/assets/LogoFitControlGym.png"
-          alt="Fit Control Logo"
-          className="w-12 h-12 object-contain"
-        />
-        <p className="text-sm">
-          &copy; 2026 <span className="text-white font-bold">Fit Control</span>.
-          <span className="block md:inline">
-            {" "}
-            Todos los derechos reservados.
-          </span>
-        </p>
-      </div>
+    <footer className="bg-black border-t border-gray-800 text-white font-sans">
+      <div className="max-w-[1100px] mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center gap-8">
 
-      <div className="flex flex-col justify-around text-xs uppercase tracking-widest items-center lg:w-[60%] lg:flex-row gap-4">
-        <p className="w-full flex items-center justify-center bg-zinc-900/50 px-4 py-2 border-l-2 border-[#d4ff00] text-center">
-          <span className="text-zinc-600 italic">Frontend:</span> React +
-          Tailwind
-        </p>
-        <p className="w-full flex items-center justify-center bg-zinc-900/50 px-4 py-2 border-l-2 border-[#d4ff00] text-center" >
-          <span className="text-zinc-600 italic">Backend:</span> Spring Boot
-        </p>
+        {/* LOGO + COPYRIGHT */}
+        <div className="flex items-center gap-4">
+          <img
+            src="src/assets/LogoFitControlGym.png"
+            alt="Fit Control Logo"
+            className="w-12 h-12 object-contain"
+          />
+          <div>
+            <p className="text-[#CCFF00] font-black italic uppercase tracking-tighter text-lg leading-none">
+              Fit Control
+            </p>
+            <p className="text-white text-[10px] uppercase tracking-widest mt-1">
+              &copy; 2026 Todos los derechos reservados
+            </p>
+          </div>
+        </div>
 
-        <p className="w-full flex items-center justify-center bg-zinc-900/50 px-4 py-2 border-l-2 border-[#d4ff00] text-center">
-          Diseño: Diseño atómico
-        </p>
+        {/* ENLACES */}
+        <nav className="flex flex-col sm:flex-row items-center gap-4 text-sm font-light tracking-wide">
+          <a
+            href="#contacto"
+            className="inline-block text-[#fb923c] hover:text-white transition-colors duration-200"
+          >
+            Contacto
+          </a>
+          <span className="hidden sm:block text-gray-700">|</span>
+          <a
+            href="#terminos"
+            className="inline-block text-[#fb923c] hover:text-white transition-colors duration-200"
+          >
+            Términos y condiciones
+          </a>
+        </nav>
+
+        {/* REDES SOCIALES */}
+        <div className="flex items-center gap-5">
+          <SocialIcon href="#" label="Instagram" Icon={FaInstagram} />
+          <SocialIcon href="#" label="Facebook" Icon={FaFacebook} />
+          <SocialIcon href="#" label="YouTube" Icon={FaYoutube} />
+          <SocialIcon href="#" label="X" Icon={FaXTwitter} />
+        </div>
+
       </div>
     </footer>
   );
