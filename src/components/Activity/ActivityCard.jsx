@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PencilSquareIcon, XMarkIcon, ChevronDownIcon, ChevronUpIcon, UserIcon, ClockIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon, UserIcon, ClockIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { activityService } from "../../services/activityService";
 
 const ActivityCard = ({
@@ -129,7 +129,7 @@ const ActivityCard = ({
                 e.stopPropagation();
                 setShowUsers(!showUsers);
               }}
-              className="flex items-center justify-center w-full py-1 mt-2 text-[10px] text-gray-400 hover:text-[#CCFF00] transition-colors"
+              className="relative group/btn flex items-center justify-center w-full py-1 mt-2 text-[10px] text-gray-400 hover:text-[#CCFF00] transition-colors"
             >
               {showUsers ? (
                 <>
@@ -142,6 +142,11 @@ const ActivityCard = ({
                   Ver usuarios inscritos ({enrolledUsers.length})
                 </>
               )}
+              <span className="absolute -top-8 left-1/2 -translate-x-1/2 
+                bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
+                {showUsers ? 'Ocultar lista' : 'Ver lista de inscritos'}
+              </span>
             </button>
             
             {showUsers && (
@@ -194,7 +199,7 @@ const ActivityCard = ({
               onClick={handleEditClick}
               className="p-2 rounded-lg text-[#CCFF00] hover:bg-[#CCFF00] hover:text-black transition-colors"
             >
-              <PencilSquareIcon className="w-6 h-6" />
+              <PencilIcon className="w-6 h-6" />
             </button>
             <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 
               bg-black text-white text-xs px-3 py-1.5 rounded font-medium
@@ -207,7 +212,7 @@ const ActivityCard = ({
               onClick={handleDeleteClick}
               className="p-2 rounded-lg text-red-500 hover:bg-red-500 hover:text-white transition-colors"
             >
-              <XMarkIcon className="w-6 h-6" />
+<TrashIcon className="w-6 h-6" />
             </button>
             <span className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 
               bg-black text-white text-xs px-3 py-1.5 rounded font-medium

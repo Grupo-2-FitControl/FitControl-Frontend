@@ -348,22 +348,41 @@ const Users = () => {
                   </td>
                   <td className="px-6 py-4 rounded-r-2xl border-r border-y border-gray-900 text-center">
                     <div className="flex justify-center items-center gap-3">
-                      <button
-                        onClick={() => openEnrollModal(user)}
-                        title="Ver actividades/Inscribir"
-                        className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
-                      >
-                        <CalendarIcon className="w-4 h-4" />
-                      </button>
-                      <PencilIcon
-                        onClick={() => handleEdit(user)}
-                        className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
-                      />
-                      <TrashIcon
-                        onClick={() => handleDelete(user.id)}
-                        title="Eliminar"
-                        className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
-                      />
+                      <div className="relative group/btn">
+                        <button
+                          onClick={() => openEnrollModal(user)}
+                          className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
+                        >
+                          <CalendarIcon className="w-4 h-4" />
+                        </button>
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                          bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                          opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
+                          Inscribir / Ver actividades
+                        </span>
+                      </div>
+                      <div className="relative group/btn">
+                        <PencilIcon
+                          onClick={() => handleEdit(user)}
+                          className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
+                        />
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                          bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                          opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
+                          Editar usuario
+                        </span>
+                      </div>
+                      <div className="relative group/btn">
+                        <TrashIcon
+                          onClick={() => handleDelete(user.id)}
+                          className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
+                        />
+                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                          bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                          opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
+                          Eliminar usuario
+                        </span>
+                      </div>
                     </div>
                   </td>
                 </tr>
