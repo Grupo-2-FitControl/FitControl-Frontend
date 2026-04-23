@@ -375,8 +375,8 @@ const Users = () => {
                 <td className="px-6 py-4 border-y border-gray-900">
                   <span className="text-xs font-black uppercase tracking-tight">{user.lastName}</span>
                 </td>
-                <td className="px-6 py-4 border-y border-gray-900 font-mono text-[11px] text-gray-400">{user.dni}</td>
-                <td className="px-6 py-4 border-y border-gray-900 text-[11px] text-gray-400">
+                <td className="px-6 py-4 border-y border-gray-900 font-mono text-[11px] text-white">{user.dni}</td>
+                <td className="px-6 py-4 border-y border-gray-900 text-[11px] text-white">
                   {user.registrationYear}
                 </td>
                 <td className="px-6 py-4 border-y border-gray-900">
@@ -402,18 +402,18 @@ const Users = () => {
                     <button
                       onClick={() => openEnrollModal(user)}
                       title="Ver actividades/Inscribir"
-                      className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
+                      className="p-2 text-white hover:text-[#CCFF00] transition-colors"
                     >
                       <CalendarIcon className="w-4 h-4" />
                     </button>
                     <PencilIcon
                       onClick={() => handleEdit(user)}
-                      className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
+                      className="w-4 h-4 text-white hover:text-[#CCFF00] cursor-pointer transition-colors"
                     />
                     <TrashIcon
                       onClick={() => handleDelete(user.id)}
                       title="Eliminar"
-                      className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
+                      className="w-10 h-10 p-2 text-white hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
                     />
                   </div>
                 </td>
