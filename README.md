@@ -38,6 +38,8 @@ Arquitectura basada en componentes reutilizables:
   - Home (Dashboard)
   - Teachers
   - Activities
+  - Activity Detail
+  - Users
 
 - **Components**
   - Cards
@@ -50,7 +52,8 @@ Arquitectura basada en componentes reutilizables:
   - dashboardService
   - activityService
   - teacherService
-  - enrollmentService
+  - userService
+  - api
 
 ---
 
@@ -148,20 +151,21 @@ DELETE /api/enrollments/{activityId}/{usersId}
 ```
 src/
 ├── pages/
-│   ├── home/
-│   │   └── Home.jsx
+│   ├── homepage/
+│   │   └── Homepage.jsx
 │   ├── teachers/
 │   │   └── Teachers.jsx
-│   ├── activities/
-│   │   └── Activities.jsx
+│   ├── Activity/
+│   │   ├── Activities.jsx
+│   │   └── ActivityDetail.jsx
+│   └── Users/
+│       └── Users.jsx
 │
 ├── components/
-│   ├── home/
-│   │   ├── StatCard.jsx
-│   │   ├── DashboardChart.jsx
-│   │   ├── RecentActivity.jsx
-│   │   ├── AlertsPanel.jsx
-│   │   └── WelcomeHeader.jsx
+│   ├── layout/
+│   │   ├── Layout.jsx
+│   │   ├── Navbar.jsx
+│   │   └── Footer.jsx
 │   │
 │   ├── teachers/
 │   │   ├── TeachersCard.jsx
@@ -169,18 +173,14 @@ src/
 │   │   ├── ScheduleModal.jsx
 │   │   └── Toast.jsx
 │   │
-│   ├── activities/
-│   │   ├── ActivityCard.jsx
-│   │   ├── CreateActivityModal.jsx
-│   │   ├── EditActivityModal.jsx
-│   │   └── ViewUsersModal.jsx
+│   ├── Activity/
+│   │   └── ActivityCard.jsx
 │
 ├── services/
-│   └── api.js
-│
-├── context/
-├── hooks/
-├── assets/
+│   ├── api.js
+│   ├── activityService.js
+│   ├── teacherService.js
+│   └── userService.js
 │
 ├── App.jsx
 ├── main.jsx
@@ -215,21 +215,25 @@ src/
 
 ### ✔️ Funcionalidades
 
-- Listado de profesores activos
-- Creación de profesores
+- Listado de profesores (activos e inactivos)
+- Creación de profesores con imagen
 - Edición mediante modal
+- Estado (activo/inactivo)
 - Visualización de horarios
 - Búsqueda por nombre
+- Control de profesorado inactivo
 
 ### 📋 Modelo de datos
 
 ```js
 {
-  nombre: String,
+  id: Number,
+  name: String,
   dni: String,
   email: String,
-  contratado: Boolean,
-  imagen: String
+  hiringYear: Number,
+  isActive: Boolean,
+  imageUrl: String
 }
 ```
 
@@ -237,6 +241,7 @@ src/
 
 - DNI → `/^\d{8}[A-Z]$/`
 - Email → formato válido
+- No permite profesor inactivo en actividades
 - Campos obligatorios
 - Feedback visual (toasts)
 
@@ -247,11 +252,39 @@ src/
 ### ✨ Funcionalidades
 
 - CRUD completo de actividades
-- Filtros por profesor, fecha y estado
 - Buscador integrado
-- Gestión de capacidad
-- Inscripción de miembros
-- Visualización de asistentes
+- Gestión de capacidad y plazas
+- Inscripción de usuarios (modal)
+- Visualización de inscritos
+- Estado de capacidad (completo/disponible)
+- Detalle de actividad (beneficios)
+- Control automático de profesores inactivos
+
+### 📋 Campos principales
+
+```js
+{
+  id: Number,
+  title: String,
+  name: String,
+  description: String,
+  price: Number,
+  capacity: Number,
+  startDate: DateTime,
+  schedule: String,
+  teacherId: Number,
+  imageUrl: String,
+  isActive: Boolean
+}
+```
+
+### 📊 Estados de capacidad
+
+| Estado | Color | Condición |
+|--------|------|----------|
+| Verde | `#22C55E` | > 3 plazas |
+| Amarillo | `#EAB308` | 1-3 plazas |
+| Rojo | `#EF4444` | 0 plazas |
 
 ### 📋 Campos principales
 
@@ -313,35 +346,63 @@ DELETE /api/enrollments/{activityId}/{usersId}
 
 ## 🧠 Reglas de negocio
 
-| Regla | Código |
-|------|--------|
-| Usuario inactivo | 403 |
-| Inscripción duplicada | 409 |
-| Máx. 3 actividades | 409 |
-| Profesor inactivo | 409 |
-| DNI/email duplicado | 409 |
-
----
+| Regla | Código | Descripción |
+|------|--------|-----------|
+| Usuario inactivo | 403 | No puede inscribirse si tiene cuota pendiente |
+| Inscripción duplicada | 409 | Ya está inscrito en esta actividad |
+| Máx. 3 actividades | 409 | Límite por usuario |
+| Profesor inactivo | 409 | No se permite asignar a actividades |
+| Profesor inactivo en actividad | Warning | Se desasigna automáticamente |
+| DNI/email duplicado | 409 | Registro único |
 
 ## 🎨 Diseño
 
-| Color | Código |
-|------|--------|
-| Primary | `#D4FF00` |
-| Secondary | `#FF5722` |
-| Dark | `#262626` |
-| Background | `#0F0F0F` |
-| Neutral | `#3f3f46` |
+| Color | Código | Uso |
+|------|--------|-----|
+| Primary | `#CCFF00` | Acentos, botones, highlight |
+| Secondary | `#FF4500` | Títulos, precios |
+| Dark | `#242526` | Cards, elementos |
+| Background | `#0A0A0A` | Fondo principal |
+| Neutral | `#3f3f46` | Bordes, textos secundarios |
+| Success | `#22C55E` | Estados positivos |
+| Warning | `#EAB308` | Estados intermedios |
+| Error | `#EF4444` | Estados negativos |
 
 ---
 
 ## 🚀 Scripts
 
 ```bash
-npm run dev
-npm run build
-npm run preview
-npm run lint
+npm run dev      # Desarrollo
+npm run build    # Producción
+npm run preview  # Previsualizar
+npm run lint    # Linting
+```
+
+---
+
+## 👥 Módulo Users
+
+### ✨ Funcionalidades
+
+- Listado de usuarios (activos e inactivos)
+- Búsqueda por nombre, apellido o DNI
+- Estado de actividad (cuota al día)
+- Ver actividades inscritas
+- Gestión de inscripciones
+
+### 📋 Modelo de datos
+
+```js
+{
+  id: Number,
+  name: String,
+  lastName: String,
+  dni: String,
+  phone: String,
+  isActive: Boolean,
+  imageUrl: String
+}
 ```
 
 ---
@@ -357,23 +418,31 @@ npm run dev
 
 ---
 
-## 🧩 Modelo relacional
+## 🔗 Modelo relacional
 
 ```
 TEACHERS (1) ─────→ (M) ACTIVITIES
-USERS  (M) ←──→ (M) ACTIVITIES
+USERS  (M) ←─────→ (M) ACTIVITIES
 ```
+
+### Tablas de relación
+
+- **activity_users**: Relación many-to-many entre Activities y Users
+  - activity_id (FK)
+  - user_id (FK)
+  - created_at (timestamp)
 
 ---
 
-## 🗺️ Roadmap
+## 🔮 Posibles Mejoras Futuras
 
-- CRUD Users
-- Autenticación
-- Backend real integration
-- Paginación
+- Autenticación de usuarios
+- Sistema de paginación
 - Filtros avanzados
-- Testing
+- Testing automático
+- Informes y exportación de datos
+- Notificaciones push
+- App móvil
 
 ---
 
@@ -388,7 +457,28 @@ USERS  (M) ←──→ (M) ACTIVITIES
 
 ## 📄 Licencia
 
-Proyecto educativo (Bootcamp)
+MIT License
+
+Copyright (c) 2026 FitControl Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction.
+
+---
+
+## 🛠️ Funcionalidades Actuales
+
+- Dashboard con KPIs en tiempo real
+- Gestión de profesores (CRUD)
+- Gestión de actividades (CRUD)
+- Gestión de usuarios (CRUD)
+- Inscripción de usuarios en actividades
+- Control de capacidad por actividad
+- Estados de plazas (verde/amarillo/rojo)
+- Visualización de horarios
+- Búsqueda integrada
+- Diseño responsive
 
 ---
 
@@ -417,3 +507,24 @@ Proyecto educativo (Bootcamp)
 ## 🕓 Última actualización
 
 Abril 2026
+
+---
+
+## 🛠️ Tecnologías
+
+| Tecnología | Versión | Uso |
+|-----------|--------|-----|
+| React | 19.x | Framework UI |
+| Vite | 8.x | Build tool |
+| Tailwind CSS | 4.x | Estilos |
+| Heroicons | 24.x | Iconos |
+| React Router | 7.x | Enrutamiento |
+| Axios | - | HTTP Client |
+
+---
+
+## 📱 Responsive
+
+- Mobile First
+- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
+- Diseño adaptativo para todos los dispositivos
