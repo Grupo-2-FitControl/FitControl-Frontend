@@ -57,6 +57,25 @@ Arquitectura basada en componentes reutilizables:
 
 ---
 
+## 🛠️ Tecnologías
+
+| Tecnología | Versión | Uso |
+|-----------|---------|-----|
+| React | 19.x | Framework UI |
+| Vite | 8.x | Build tool |
+| Tailwind CSS | 4.x | Estilos |
+| Heroicons | 24.x | Iconos |
+| React Router | 7.x | Enrutamiento |
+| Axios | - | HTTP Client |
+
+## 📱 Responsive
+
+- Mobile First
+- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
+- Diseño adaptativo para todos los dispositivos
+
+---
+
 ## 🗄️ Estructura de Datos (Backend)
 
 ### Teachers (Profesores)
@@ -286,20 +305,6 @@ src/
 | Amarillo | `#EAB308` | 1-3 plazas |
 | Rojo | `#EF4444` | 0 plazas |
 
-### 📋 Campos principales
-
-```js
-{
-  titulo,
-  descripcion,
-  precio,
-  fecha,
-  profesor_id,
-  capacidad,
-  imagen
-}
-```
-
 ---
 
 ## 🔌 API Backend
@@ -498,24 +503,3 @@ in the Software without restriction.
 ## 🕓 Última actualización
 
 Abril 2026
-
----
-
-## 🛠️ Tecnologías
-
-| Tecnología | Versión | Uso |
-|-----------|--------|-----|
-| React | 19.x | Framework UI |
-| Vite | 8.x | Build tool |
-| Tailwind CSS | 4.x | Estilos |
-| Heroicons | 24.x | Iconos |
-| React Router | 7.x | Enrutamiento |
-| Axios | - | HTTP Client |
-
----
-
-## 📱 Responsive
-
-- Mobile First
-- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
-- Diseño adaptativo para todos los dispositivos
