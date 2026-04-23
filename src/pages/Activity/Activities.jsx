@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {CheckIcon, XMarkIcon, PlusIcon} from "@heroicons/react/24/outline";
+import {PlusIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import {activityService} from "../../services/activityService";
 import {teacherService} from "../../services/teacherService";
 import {userService} from "../../services/userService";
@@ -80,6 +80,7 @@ function Activities() {
   const [allUsers, setAllUsers] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [userActivitiesMap, setUserActivitiesMap] = useState({});
 
   const cargarActividades = async () => {
     try {
@@ -88,6 +89,17 @@ function Activities() {
         teacherService.getAll(),
         userService.getAll()
       ]);
+
+      const userActsMap = {};
+      for (const user of users) {
+        try {
+          const acts = await userService.getEnrolledActivities(user.id);
+          userActsMap[user.id] = acts || [];
+        } catch {
+          userActsMap[user.id] = [];
+        }
+      }
+      setUserActivitiesMap(userActsMap);
 
       const teachersMap = {};
       teachers.forEach((t) => {
@@ -324,6 +336,7 @@ function Activities() {
                 name={act.title || act.name}
                 {...act}
                 allUsers={allUsers}
+                userActivitiesMap={userActivitiesMap}
                 onEdit={handleEditActivity}
                 onDelete={handleDeleteActivity}
                 onEnrollSuccess={cargarActividades}
@@ -343,26 +356,7 @@ function Activities() {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-[#CCFF00] text-2xl font-bold uppercase tracking-wider">
                   {nuevaActividad.titulo ? "Editar Actividad" : "Nueva Actividad"}
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowModal(false);
-                    setEditingId(null);
-                    setNuevaActividad({
-                      titulo: "",
-                      descripcion: "",
-                      precio: "",
-                      fecha: "",
-                      profesorId: "",
-                      imagenUrl: "",
-                      horario: "",
-                      capacidad: "",
-                    });
-                  }}
-                  className="text-gray-400 hover:text-white"
-                >
-                  <XMarkIcon className="w-6 h-6" />
-                </button>
+</h2>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -419,13 +413,53 @@ function Activities() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-gray-400 text-sm font-bold mb-1 uppercase">Horario</label>
-                    <input
-                      type="text"
+                    <select
                       value={nuevaActividad.horario}
                       onChange={(e) => setNuevaActividad({...nuevaActividad, horario: e.target.value})}
-                      placeholder="L-V 10:00"
                       className="w-full bg-[#262626] border border-gray-800 rounded-lg p-2 text-white focus:border-[#CCFF00] outline-none"
-                    />
+                    >
+                      <option value="">Seleccionar horario</option>
+                      <option value="Lunes 08:00">Lunes 08:00</option>
+                      <option value="Lunes 09:30">Lunes 09:30</option>
+                      <option value="Lunes 11:00">Lunes 11:00</option>
+                      <option value="Lunes 12:30">Lunes 12:30</option>
+                      <option value="Lunes 17:00">Lunes 17:00</option>
+                      <option value="Lunes 18:30">Lunes 18:30</option>
+                      <option value="Lunes 20:00">Lunes 20:00</option>
+                      <option value="Martes 08:00">Martes 08:00</option>
+                      <option value="Martes 09:30">Martes 09:30</option>
+                      <option value="Martes 11:00">Martes 11:00</option>
+                      <option value="Martes 12:30">Martes 12:30</option>
+                      <option value="Martes 17:00">Martes 17:00</option>
+                      <option value="Martes 18:30">Martes 18:30</option>
+                      <option value="Martes 20:00">Martes 20:00</option>
+                      <option value="Miércoles 08:00">Miércoles 08:00</option>
+                      <option value="Miércoles 09:30">Miércoles 09:30</option>
+                      <option value="Miércoles 11:00">Miércoles 11:00</option>
+                      <option value="Miércoles 12:30">Miércoles 12:30</option>
+                      <option value="Miércoles 17:00">Miércoles 17:00</option>
+                      <option value="Miércoles 18:30">Miércoles 18:30</option>
+                      <option value="Miércoles 20:00">Miércoles 20:00</option>
+                      <option value="Jueves 08:00">Jueves 08:00</option>
+                      <option value="Jueves 09:30">Jueves 09:30</option>
+                      <option value="Jueves 11:00">Jueves 11:00</option>
+                      <option value="Jueves 12:30">Jueves 12:30</option>
+                      <option value="Jueves 17:00">Jueves 17:00</option>
+                      <option value="Jueves 18:30">Jueves 18:30</option>
+                      <option value="Jueves 20:00">Jueves 20:00</option>
+                      <option value="Viernes 08:00">Viernes 08:00</option>
+                      <option value="Viernes 09:30">Viernes 09:30</option>
+                      <option value="Viernes 11:00">Viernes 11:00</option>
+                      <option value="Viernes 12:30">Viernes 12:30</option>
+                      <option value="Viernes 17:00">Viernes 17:00</option>
+                      <option value="Viernes 18:30">Viernes 18:30</option>
+                      <option value="Viernes 20:00">Viernes 20:00</option>
+                      <option value="Sábado 09:00">Sábado 09:00</option>
+                      <option value="Sábado 10:30">Sábado 10:30</option>
+                      <option value="Sábado 12:00">Sábado 12:00</option>
+                      <option value="Domingo 10:00">Domingo 10:00</option>
+                      <option value="Domingo 12:00">Domingo 12:00</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-gray-400 text-sm font-bold mb-1 uppercase">Capacidad</label>
@@ -477,12 +511,22 @@ function Activities() {
                         capacidad: "",
                       });
                     }}
-                    className="text-gray-500 hover:text-red-500 text-3xl"
+                    className="group relative text-gray-500 hover:text-red-500"
                   >
-                    &times;
+                    <XMarkIcon className="w-8 h-8" />
+                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                      bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                      opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-50">
+                      Cancelar
+                    </span>
                   </button>
-                  <button type="submit" className="text-gray-500 hover:text-[#CCFF00]">
+                  <button type="submit" className="group relative text-gray-500 hover:text-[#CCFF00]">
                     <CheckIcon className="w-8 h-8" />
+                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                      bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                      opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-50">
+                      Guardar
+                    </span>
                   </button>
                 </div>
               </form>

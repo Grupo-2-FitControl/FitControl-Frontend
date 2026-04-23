@@ -396,67 +396,49 @@ const Users = () => {
                   >
                     {user.isActive ? "ACTIVO" : "INACTIVO"}
                   </span>
-                </td>
+</td>
                 <td className="px-6 py-4 rounded-r-2xl border-r border-y border-gray-900 text-center">
                   <div className="flex justify-center items-center gap-3">
-                    <button
-                      onClick={() => openEnrollModal(user)}
-                      title="Ver actividades/Inscribir"
-                      className="p-2 text-white hover:text-[#CCFF00] transition-colors"
-                    >
-<CalendarIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                  </td>
-                  <td className="px-6 py-4 border-y border-gray-900 text-center">
-                    <span
-                      className={`text-[8px] font-black px-2 py-1 rounded ${user.isActive ? "bg-[#CCFF00] text-black" : "bg-red-600 text-white"}`}
-                    >
-                      {user.isActive ? "ACTIVO" : "INACTIVO"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 rounded-r-2xl border-r border-y border-gray-900 text-center">
-                    <div className="flex justify-center items-center gap-3">
-                      <div className="relative group/btn">
-                        <button
-                          onClick={() => openEnrollModal(user)}
-                          className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
-                        >
-                          <CalendarIcon className="w-4 h-4" />
-                        </button>
-                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
-                          bg-black text-white text-xs px-3 py-1.5 rounded font-medium
-                          opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
-                          Inscribir / Ver actividades
-                        </span>
-                      </div>
-                      <div className="relative group/btn">
-                        <PencilIcon
-                          onClick={() => handleEdit(user)}
-                          className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
-                        />
-                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
-                          bg-black text-white text-xs px-3 py-1.5 rounded font-medium
-                          opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
-                          Editar usuario
-                        </span>
-                      </div>
-                      <div className="relative group/btn">
-                        <TrashIcon
-                          onClick={() => handleDelete(user.id)}
-                          className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
-                        />
-                        <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
-                          bg-black text-white text-xs px-3 py-1.5 rounded font-medium
-                          opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
-                          Eliminar usuario
-                        </span>
-                      </div>
+                    <div className="relative group/btn">
+                      <button
+                        onClick={() => openEnrollModal(user)}
+                        className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
+                      >
+                        <CalendarIcon className="w-4 h-4" />
+                      </button>
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                        bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                        opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
+                        Inscribir / Ver actividades
+                      </span>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                    <div className="relative group/btn">
+                      <PencilIcon
+                        onClick={() => handleEdit(user)}
+                        className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
+                      />
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                        bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                        opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
+                        Editar usuario
+                      </span>
+                    </div>
+                    <div className="relative group/btn">
+                      <TrashIcon
+                        onClick={() => handleDelete(user.id)}
+                        className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
+                      />
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                        bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                        opacity-0 group-hover/btn:opacity-100 transition whitespace-nowrap z-50 pointer-events-none">
+                        Eliminar usuario
+                      </span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
 
@@ -545,7 +527,7 @@ const Users = () => {
                   onChange={(e) => setNuevoUsuario({...nuevoUsuario, isActive: e.target.checked})}
                   className="w-4 h-4 accent-[#CCFF00]"
                 />
-                <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Activo</label>
+                <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Activo (cuota pagada)</label>
               </div>
               
               {activities.length > 0 && (
@@ -598,17 +580,25 @@ const Users = () => {
               <div className="flex items-center justify-end gap-4 pt-2 md:col-span-2">
                 <button
                   onClick={resetForm}
-                  className="p-3 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-all"
-                  title="Cancelar / Limpiar"
+                  className="group relative text-gray-500 hover:text-red-500"
                 >
                   <XMarkIcon className="w-6 h-6" />
+                  <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                    bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                    opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-50">
+                    Cancelar
+                  </span>
                 </button>
                 <button
                   type="submit"
-                  className="p-3 rounded-lg bg-[#CCFF00] text-black hover:bg-[#b8e600] transition-all"
-                  title={editingUser ? "Guardar Cambios" : "Registrar Socio"}
+                  className="group relative text-gray-500 hover:text-[#CCFF00]"
                 >
                   <CheckIcon className="w-6 h-6" />
+                  <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
+                    bg-black text-white text-xs px-3 py-1.5 rounded font-medium
+                    opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-50">
+                    {editingUser ? "Guardar" : "Registrar"}
+                  </span>
                 </button>
               </div>
             </form>

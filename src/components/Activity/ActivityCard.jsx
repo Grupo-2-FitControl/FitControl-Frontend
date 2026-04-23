@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PencilIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon, UserIcon, ClockIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon, UserIcon, ClockIcon, UserPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { activityService } from "../../services/activityService";
 
 const ActivityCard = ({
@@ -19,6 +19,7 @@ const ActivityCard = ({
   onDelete,
   onEnrollSuccess,
   allUsers = [],
+  userActivitiesMap = {},
 }) => {
   const [showUsers, setShowUsers] = useState(false);
   const [showEnrollModal, setShowEnrollModal] = useState(false);
@@ -37,6 +38,16 @@ const ActivityCard = ({
 
   const handleEnrollUser = async (userId) => {
     try {
+      const user = allUsers.find(u => u.id === userId);
+      if (!user.isActive) {
+        alert("Este usuario no está activo (cuota pendiente). No puede inscribirse.");
+        return;
+      }
+      const userActivitiesCount = (userActivitiesMap[userId] || []).length;
+      if (userActivitiesCount >= 3) {
+        alert("Este usuario ya está inscribed en 3 actividades. No puede inscribirse en más.");
+        return;
+      }
       await activityService.enrollUser(id, userId);
       if (onEnrollSuccess) onEnrollSuccess();
       setShowEnrollModal(false);
@@ -48,7 +59,8 @@ const ActivityCard = ({
 
   const enrolledUserIds = enrolledUsers.map(u => u.id);
   const availableUsers = allUsers.filter(u => 
-    u.isActive !== false && !enrolledUserIds.includes(u.id)
+    u.isActive !== false && 
+    !enrolledUserIds.includes(u.id)
   );
 
   return (

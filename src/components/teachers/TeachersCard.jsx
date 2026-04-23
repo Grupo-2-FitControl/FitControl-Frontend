@@ -1,4 +1,4 @@
-import { PencilSquareIcon, XMarkIcon, CheckIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon, CalendarIcon, CheckIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
 import { XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 
 const activityColors = {
@@ -133,7 +133,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
             onClick={() => onEdit(teacher)}
             className="text-[#CCFF00] hover:text-white transition-all duration-200 hover:scale-125 p-2"
           >
-            <PencilSquareIcon className="w-7 h-7" />
+            <PencilIcon className="w-7 h-7" />
           </button>
           <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
             bg-black text-white text-xs px-3 py-1.5 rounded font-medium
@@ -147,7 +147,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
             onClick={() => onDelete(teacher.id)}
             className="text-red-500 hover:text-white transition-all duration-200 hover:scale-125 p-2"
           >
-            <XMarkIcon className="w-7 h-7" />
+            <TrashIcon className="w-7 h-7" />
           </button>
           <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
             bg-black text-white text-xs px-3 py-1.5 rounded font-medium
@@ -161,7 +161,7 @@ const TeacherCard = ({ teacher, onEdit, onDelete, onSchedule }) => {
             onClick={() => onSchedule(teacher)}
             className="text-[#FF5722] hover:text-[#CCFF00] transition-all duration-200 hover:scale-125 p-2"
           >
-            <CheckIcon className="w-7 h-7" />
+            <CalendarIcon className="w-7 h-7" />
           </button>
           <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
             bg-black text-white text-xs px-3 py-1.5 rounded font-medium

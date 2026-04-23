@@ -8,7 +8,8 @@ import {
     PlusIcon,
     CheckIcon,
     XMarkIcon,
-    ArrowPathIcon
+    ArrowPathIcon,
+    UserPlusIcon
 } from '@heroicons/react/24/outline';
 
 const Teachers = () => {
@@ -164,7 +165,7 @@ const Teachers = () => {
             hover:scale-110 active:scale-95 
             shadow-[0_0_20px_rgba(204,255,0,0.2)] z-10"
                     >
-                        <PlusIcon className="w-6 h-6" />
+                        <UserPlusIcon className="w-6 h-6" />
 
                         <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 
             bg-gray-800 text-white text-xs px-2 py-1 rounded 
