@@ -406,7 +406,7 @@ const Users = () => {
                     >
 <CalendarIcon className="w-4 h-4" />
                     </button>
-                    </div>
+                  </div>
                   </td>
                   <td className="px-6 py-4 border-y border-gray-900 text-center">
                     <span
