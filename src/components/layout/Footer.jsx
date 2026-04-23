@@ -13,7 +13,7 @@ const SocialIcon = ({ href, label, Icon }) => {
       onMouseLeave={() => setHovered(false)}
       style={{
         color: hovered ? "#fb923c" : "#CCFF00",
-        transform: hovered ? "scale(1.25)" : "scale(1)",
+        transform: hovered ? "scale(1.5)" : "scale(1)",
         display: "inline-block",
         transition: "color 0.2s ease, transform 0.2s ease",
       }}
@@ -39,7 +39,7 @@ function Footer() {
             <p className="text-[#CCFF00] font-black italic uppercase tracking-tighter text-lg leading-none">
               Fit Control
             </p>
-            <p className="text-gray-500 text-[10px] uppercase tracking-widest mt-1">
+            <p className="text-white text-[10px] uppercase tracking-widest mt-1">
               &copy; 2026 Todos los derechos reservados
             </p>
           </div>
