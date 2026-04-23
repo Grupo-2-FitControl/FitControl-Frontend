@@ -375,8 +375,8 @@ const Users = () => {
                 <td className="px-6 py-4 border-y border-gray-900">
                   <span className="text-xs font-black uppercase tracking-tight">{user.lastName}</span>
                 </td>
-                <td className="px-6 py-4 border-y border-gray-900 font-mono text-[11px] text-white">{user.dni}</td>
-                <td className="px-6 py-4 border-y border-gray-900 text-[11px] text-white">
+                <td className="px-6 py-4 border-y border-gray-900 font-mono text-xs text-white">{user.dni}</td>
+                <td className="px-6 py-4 border-y border-gray-900 text-xs text-white">
                   {user.registrationYear}
                 </td>
                 <td className="px-6 py-4 border-y border-gray-900">
