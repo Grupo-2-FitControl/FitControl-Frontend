@@ -13,10 +13,10 @@ export default function Features() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="#d4ff00"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-target"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="icon icon-tabler icons-tabler-outline icon-tabler-target"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
@@ -36,10 +36,10 @@ export default function Features() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="#d4ff00"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-alarm"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="icon icon-tabler icons-tabler-outline icon-tabler-alarm"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M5 13a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
@@ -60,10 +60,10 @@ export default function Features() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="#d4ff00"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-notebook"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="icon icon-tabler icons-tabler-outline icon-tabler-notebook"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" />
@@ -83,10 +83,10 @@ export default function Features() {
           viewBox="0 0 24 24"
           fill="none"
           stroke="#d4ff00"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-star"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="icon icon-tabler icons-tabler-outline icon-tabler-star"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873l-6.158 -3.245" />
