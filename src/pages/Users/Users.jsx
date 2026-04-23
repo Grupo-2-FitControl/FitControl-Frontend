@@ -266,16 +266,26 @@ const Users = () => {
     });
   };
 
+  const filteredUsers = usuarios
+    .filter(
+      (u) =>
+        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.dni?.includes(searchTerm),
+    )
+    .sort((a, b) => (a.lastName || "").localeCompare(b.lastName || ""));
+
   return (
-    <div className="p-8 bg-black min-h-screen text-white font-sans">
+    <div className="w-full min-h-screen bg-black text-white font-sans flex flex-col items-center">
+    <div className="max-w-[1100px] w-full p-4 md:p-8">
       {/* HEADER */}
-      <div className="flex flex-col flex-wrap md:flex-row justify-between items-center gap-6 mb-12">
-        <h1 className="text-5xl text-[#CCFF00] border-l-8 pl-6 border-[#CCFF00] w-full font-black italic uppercase tracking-tighter">
+      <div className="flex flex-col gap-4 mb-8 md:mb-12">
+        <h1 className="text-3xl md:text-5xl text-[#CCFF00] border-l-8 pl-6 border-[#CCFF00] w-full font-black italic uppercase tracking-tighter">
           Usuarios
         </h1>
 
-        <div className="flex items-center gap-4 w-full md:w-full justify-between">
-          <div className="relative group w-full md:w-80">
+        <div className="flex items-center gap-4 w-full">
+          <div className="relative group flex-1 md:w-80">
             <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-[#CCFF00]" />
             <input
               type="text"
@@ -286,15 +296,64 @@ const Users = () => {
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-[#CCFF00] text-black p-3 rounded-xl hover:scale-110 transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)]"
+            className="bg-[#CCFF00] text-black p-3 rounded-xl hover:scale-110 transition-all shadow-[0_0_15px_rgba(204,255,0,0.3)] shrink-0"
           >
             <UserPlusIcon className="w-6 h-6" />
           </button>
         </div>
       </div>
 
-      {/* TABLA */}
-      <div className="w-full overflow-x-auto">
+      {/* CARDS - Mobile */}
+      <div className="grid grid-cols-1 gap-3 md:hidden">
+        {filteredUsers.map((user) => (
+          <div key={user.id} className="bg-[#0c0c0c] border border-gray-900 rounded-2xl p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <p className="text-sm font-black uppercase tracking-tight">
+                  {user.name} {user.lastName}
+                </p>
+                <p className="font-mono text-[11px] text-gray-400">{user.dni}</p>
+                <p className="text-[11px] text-gray-500 mt-0.5">Alta: {user.registrationYear}</p>
+              </div>
+              <span
+                className={`text-[8px] font-black px-2 py-1 rounded ${user.isActive ? "bg-[#CCFF00] text-black" : "bg-red-600 text-white"}`}
+              >
+                {user.isActive ? "ACTIVO" : "INACTIVO"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center pt-2 border-t border-gray-900">
+              <button
+                onClick={() => openEnrollModal(user)}
+                className="text-[10px] text-[#CCFF00] flex items-center gap-1"
+              >
+                <CalendarIcon className="w-3 h-3" />
+                {(userActivities[user.id] || []).length > 0
+                  ? `${(userActivities[user.id] || []).length} inscrita(s)`
+                  : "Inscribir"}
+              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openEnrollModal(user)}
+                  className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
+                >
+                  <CalendarIcon className="w-4 h-4" />
+                </button>
+                <PencilIcon
+                  onClick={() => handleEdit(user)}
+                  className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
+                />
+                <TrashIcon
+                  onClick={() => handleDelete(user.id)}
+                  className="w-8 h-8 p-1.5 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* TABLA - Desktop */}
+      <div className="hidden md:block w-full overflow-x-auto">
         <table className="w-full text-left border-separate border-spacing-y-3">
           <thead>
             <tr className="text-[#CCFF00] text-[10px] uppercase tracking-[2px] font-black">
@@ -308,66 +367,58 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {usuarios
-              .filter(
-                (u) =>
-                  u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  u.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  u.dni?.includes(searchTerm),
-              )
-              .sort((a, b) => (a.lastName || "").localeCompare(b.lastName || ""))
-              .map((user) => (
-                <tr key={user.id} className="bg-[#0c0c0c] border border-gray-900 group hover:bg-[#111] transition-all">
-                  <td className="px-6 py-4 rounded-l-2xl border-l border-y border-gray-900">
-                    <span className="text-xs font-black uppercase tracking-tight">{user.name}</span>
-                  </td>
-                  <td className="px-6 py-4 border-y border-gray-900">
-                    <span className="text-xs font-black uppercase tracking-tight">{user.lastName}</span>
-                  </td>
-                  <td className="px-6 py-4 border-y border-gray-900 font-mono text-[11px] text-gray-400">{user.dni}</td>
-                  <td className="px-6 py-4 border-y border-gray-900 text-[11px] text-gray-400">
-                    {user.registrationYear}
-                  </td>
-                  <td className="px-6 py-4 border-y border-gray-900">
+            {filteredUsers.map((user) => (
+              <tr key={user.id} className="bg-[#0c0c0c] border border-gray-900 group hover:bg-[#111] transition-all">
+                <td className="px-6 py-4 rounded-l-2xl border-l border-y border-gray-900">
+                  <span className="text-xs font-black uppercase tracking-tight">{user.name}</span>
+                </td>
+                <td className="px-6 py-4 border-y border-gray-900">
+                  <span className="text-xs font-black uppercase tracking-tight">{user.lastName}</span>
+                </td>
+                <td className="px-6 py-4 border-y border-gray-900 font-mono text-[11px] text-gray-400">{user.dni}</td>
+                <td className="px-6 py-4 border-y border-gray-900 text-[11px] text-gray-400">
+                  {user.registrationYear}
+                </td>
+                <td className="px-6 py-4 border-y border-gray-900">
+                  <button
+                    onClick={() => openEnrollModal(user)}
+                    className="text-[10px] text-[#CCFF00] hover:underline flex items-center gap-1"
+                  >
+                    <CalendarIcon className="w-3 h-3" />
+                    {(userActivities[user.id] || []).length > 0
+                      ? `${(userActivities[user.id] || []).length} inscrita(s)`
+                      : "Inscribir"}
+                  </button>
+                </td>
+                <td className="px-6 py-4 border-y border-gray-900 text-center">
+                  <span
+                    className={`text-[8px] font-black px-2 py-1 rounded ${user.isActive ? "bg-[#CCFF00] text-black" : "bg-red-600 text-white"}`}
+                  >
+                    {user.isActive ? "ACTIVO" : "INACTIVO"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 rounded-r-2xl border-r border-y border-gray-900 text-center">
+                  <div className="flex justify-center items-center gap-3">
                     <button
                       onClick={() => openEnrollModal(user)}
-                      className="text-[10px] text-[#CCFF00] hover:underline flex items-center gap-1"
+                      title="Ver actividades/Inscribir"
+                      className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
                     >
-                      <CalendarIcon className="w-3 h-3" />
-                      {(userActivities[user.id] || []).length > 0 
-                        ? `${(userActivities[user.id] || []).length} inscrita(s)`
-                        : "Inscribir"}
+                      <CalendarIcon className="w-4 h-4" />
                     </button>
-                  </td>
-                  <td className="px-6 py-4 border-y border-gray-900 text-center">
-                    <span
-                      className={`text-[8px] font-black px-2 py-1 rounded ${user.isActive ? "bg-[#CCFF00] text-black" : "bg-red-600 text-white"}`}
-                    >
-                      {user.isActive ? "ACTIVO" : "INACTIVO"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 rounded-r-2xl border-r border-y border-gray-900 text-center">
-                    <div className="flex justify-center items-center gap-3">
-                      <button
-                        onClick={() => openEnrollModal(user)}
-                        title="Ver actividades/Inscribir"
-                        className="p-2 text-gray-600 hover:text-[#CCFF00] transition-colors"
-                      >
-                        <CalendarIcon className="w-4 h-4" />
-                      </button>
-                      <PencilIcon
-                        onClick={() => handleEdit(user)}
-                        className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
-                      />
-                      <TrashIcon
-                        onClick={() => handleDelete(user.id)}
-                        title="Eliminar"
-                        className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    <PencilIcon
+                      onClick={() => handleEdit(user)}
+                      className="w-4 h-4 text-gray-600 hover:text-white cursor-pointer transition-colors"
+                    />
+                    <TrashIcon
+                      onClick={() => handleDelete(user.id)}
+                      title="Eliminar"
+                      className="w-10 h-10 p-2 text-gray-600 hover:text-white hover:bg-red-600 hover:shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all rounded-lg"
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -607,6 +658,7 @@ const Users = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
