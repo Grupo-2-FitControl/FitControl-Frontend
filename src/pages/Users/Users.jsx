@@ -303,7 +303,6 @@ const Users = () => {
         </div>
       </div>
 
-      {/* CARDS - Mobile */}
       <div className="grid grid-cols-1 gap-3 md:hidden">
         {filteredUsers.map((user) => (
           <div key={user.id} className="bg-[#0c0c0c] border border-gray-900 rounded-2xl p-4">
@@ -352,7 +351,6 @@ const Users = () => {
         ))}
       </div>
 
-      {/* TABLA - Desktop */}
       <div className="hidden md:block w-full overflow-x-auto">
         <table className="w-full text-left border-separate border-spacing-y-3">
           <thead>
@@ -442,7 +440,6 @@ const Users = () => {
         </table>
       </div>
 
-      {/* MODAL NUEVO/EDITAR USUARIO */}
       {showModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
           <div className="bg-[#111] border border-gray-800 w-full max-w-3xl rounded-2xl p-4 sm:p-6 relative transition-all duration-300 hover:border-[#CCFF00]">
@@ -606,7 +603,6 @@ const Users = () => {
         </div>
       )}
 
-      {/* MODAL INSCRIBIR ACTIVIDADES */}
       {showEnrollModal && selectedUser && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-auto">
           <div className="bg-[#111] border border-gray-800 w-full max-w-lg rounded-2xl p-6 relative transition-all duration-300 hover:border-[#CCFF00] my-8">

@@ -236,7 +236,6 @@ const ActivityCard = ({
       </div>
     </div>
 
-    {/* Modal de inscripción */}
     {showEnrollModal && (
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className="bg-[#1A1A1A] border border-gray-700 rounded-2xl w-full max-w-md p-6 relative">

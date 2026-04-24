@@ -81,7 +81,6 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
                     </div>
                 )}
 
-                {/* Nombre */}
                 <div className="mb-3">
                     <label className="text-[10px] text-[#FF5722] font-black tracking-widest uppercase block mb-1">
                         Nombre completo *
@@ -95,7 +94,6 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
                     />
                 </div>
 
-                {/* DNI + Año */}
                 <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
                         <label className="text-[10px] text-[#FF5722] font-black tracking-widest uppercase block mb-1">
@@ -129,7 +127,6 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
                     </div>
                 </div>
 
-                {/* Imagen */}
                 <div className="mb-3">
                     <label className="text-[10px] text-[#FF5722] font-black tracking-widest uppercase block mb-1">
                         URL Imagen (Cloudinary)
@@ -143,7 +140,6 @@ const EditTeacherModal = ({ teacher, onClose, onSaved }) => {
                     />
                 </div>
 
-                {/* Activo */}
                 <div className="flex items-center gap-2 mb-5">
                     <input
                         type="checkbox"

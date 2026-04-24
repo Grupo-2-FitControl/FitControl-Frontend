@@ -6,7 +6,6 @@ import { activityService } from "../../services/activityService";
 
 const DATOS_BENEFICIOS = {
   1: [
-    // AQUA FIT
     {
       id: "a1",
       titulo: "Resistencia",
@@ -39,7 +38,6 @@ const DATOS_BENEFICIOS = {
     },
   ],
   2: [
-    // BIKE
     {
       id: "b1",
       titulo: "Potencia de Piernas",
@@ -72,7 +70,6 @@ const DATOS_BENEFICIOS = {
     },
   ],
   3: [
-    // CIRCUITO
     {
       id: "ci1",
       titulo: "Variedad",
@@ -105,7 +102,6 @@ const DATOS_BENEFICIOS = {
     },
   ],
   4: [
-    // CROSS TRAINING
     {
       id: "ct1",
       titulo: "Fuerza Funcional",
@@ -138,7 +134,6 @@ const DATOS_BENEFICIOS = {
     },
   ],
   5: [
-    // PILATES
     {
       id: "p1",
       titulo: "Core de Hierro",
@@ -171,7 +166,6 @@ const DATOS_BENEFICIOS = {
     },
   ],
   6: [
-    // ZUMBA
     {
       id: "z1",
       titulo: "Quema Bailando",

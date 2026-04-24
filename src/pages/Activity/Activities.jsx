@@ -170,7 +170,6 @@ function Activities() {
     cargarActividades();
   }, []);
 
-  // --- LÓGICA DE FILTRADO CORREGIDA ---
   const filteredActivities = (activities.length > 0 ? activities : misActividades)
     .filter((act) => {
       if (!searchTerm) return true;
@@ -349,7 +348,6 @@ function Activities() {
           )}
         </div>
 
-        {/* MODAL (Se mantiene igual) */}
         {showModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-[#1A1A1A] p-8 rounded-xl w-full max-w-xl border-2 border-transparent transition-all duration-300 hover:border-[#CCFF00]">

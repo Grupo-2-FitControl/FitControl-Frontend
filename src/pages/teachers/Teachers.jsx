@@ -142,12 +142,10 @@ const Teachers = () => {
         <div className="w-full min-h-screen bg-[#0A0A0A] p-6 flex flex-col items-center">
             <div className="max-w-[1100px] w-full">
 
-                {/* HEADER */}
                 <h1 className="text-[#CCFF00] text-5xl font-black uppercase italic mb-12 border-l-8 border-[#CCFF00] pl-6">
                     PROFESORES
                 </h1>
 
-                {/* SEARCH + ADD */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 w-full">
 
                     <input
@@ -176,7 +174,6 @@ const Teachers = () => {
 
                 </div>
 
-                {/* LIST */}
                 {isLoading ? (
                     <p className="text-white">Loading...</p>
                 ) : (
@@ -193,13 +190,11 @@ const Teachers = () => {
                     </div>
                 )}
 
-                {/* MODAL CREATE */}
                 {isCreateModalOpen && (
                     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
                         <div className="bg-[#1A1A1A] p-8 rounded-xl w-full max-w-xl border-2 border-transparent hover:border-[#CCFF00]">
 
-                            {/* HEADER */}
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-[#CCFF00] text-2xl font-bold uppercase">
                                     Nuevo Profesor
@@ -217,10 +212,8 @@ const Teachers = () => {
                                 </button>
                             </div>
 
-                            {/* FORM */}
                             <form onSubmit={handleSubmit} className="space-y-4">
 
-                                {/* NAME */}
                                 <div>
                                     <label className="text-gray-400 text-sm uppercase">Nombre y apellidos</label>
                                     <input
@@ -232,7 +225,6 @@ const Teachers = () => {
                                     />
                                 </div>
 
-                                {/* DNI + YEAR */}
                                 <div className="grid grid-cols-2 gap-4">
 
                                     <input
@@ -260,7 +252,6 @@ const Teachers = () => {
                                     />
                                 </div>
 
-                                {/* ACTIVE */}
                                 <div className="flex items-center gap-3">
                                     <input
                                         type="checkbox"
@@ -278,7 +269,6 @@ const Teachers = () => {
                                     </label>
                                 </div>
 
-                                {/* IMAGE */}
                                 <input
                                     value={formData.imageUrl}
                                     onChange={(e) =>
@@ -291,7 +281,6 @@ const Teachers = () => {
                                     className="w-full bg-[#262626] p-2 rounded text-white border border-gray-800 focus:border-[#CCFF00]"
                                 />
 
-                                {/* BUTTONS */}
                                 <div className="flex justify-end gap-6 mt-6">
 
                                     <button type="button" onClick={resetForm} className="group relative">
@@ -322,7 +311,6 @@ const Teachers = () => {
                     </div>
                 )}
 
-                {/* EDIT MODAL */}
                 {editingTeacher && (
                     <EditTeacherModal
                         teacher={editingTeacher}
@@ -331,7 +319,6 @@ const Teachers = () => {
                     />
                 )}
 
-                {/* TOAST */}
                 {toast && (
                     <Toast
                         message={toast.message}

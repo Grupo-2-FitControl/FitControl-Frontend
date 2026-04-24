@@ -28,7 +28,6 @@ function Footer() {
     <footer className="bg-black border-t border-gray-800 text-white font-sans">
       <div className="max-w-[1100px] mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center gap-8">
 
-        {/* LOGO + COPYRIGHT */}
         <div className="flex items-center gap-4">
           <img
             src="src/assets/LogoFitControlGym.png"
@@ -45,7 +44,6 @@ function Footer() {
           </div>
         </div>
 
-        {/* ENLACES */}
         <nav className="flex flex-col sm:flex-row items-center gap-4 text-sm font-light tracking-wide">
           <a
             href="#contacto"
@@ -62,7 +60,6 @@ function Footer() {
           </a>
         </nav>
 
-        {/* REDES SOCIALES */}
         <div className="flex items-center gap-5">
           <SocialIcon href="#" label="Instagram" Icon={FaInstagram} />
           <SocialIcon href="#" label="Facebook" Icon={FaFacebook} />
