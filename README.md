@@ -28,6 +28,22 @@ Centralizar la gestión del gimnasio en una plataforma única que permite:
 
 ---
 
+## 📸 Screenshots
+
+<img width="1920" height="3775" alt="screencapture-localhost-5173-2026-04-23-20_41_10" src="https://github.com/user-attachments/assets/79cb5635-6749-4e5f-b578-c6b2a8a271a1" />
+
+
+<img width="1920" height="3095" alt="screencapture-localhost-5173-activities-2026-04-24-10_16_59" src="https://github.com/user-attachments/assets/746075ca-0d5f-4694-b904-5f2162ad13bf" />
+
+
+<img width="1440" height="2164" alt="screencapture-localhost-5173-teachers-2026-04-23-20_43_49 2" src="https://github.com/user-attachments/assets/d7079ad4-ae35-4d44-91e4-7b84420af38f" />
+
+
+<img width="1920" height="4036" alt="screencapture-localhost-5173-users-2026-04-24-10_17_18" src="https://github.com/user-attachments/assets/05e8b8ec-992a-4b3e-9a26-7fce58e09a71" />
+
+---
+
+
 ## 🧠 Arquitectura
 
 Arquitectura basada en componentes reutilizables:
